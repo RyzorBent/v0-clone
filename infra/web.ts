@@ -4,7 +4,6 @@ import { db, github } from "./secrets";
 export const web = new sst.aws.Nextjs("Web", {
   path: "packages/web",
   link: [db, ...github],
-  buildCommand: "pnpm open-next build --streaming",
   domain:
     $app.stage === "production"
       ? {
