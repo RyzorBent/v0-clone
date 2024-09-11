@@ -15,9 +15,12 @@
     "start": "next start"
   },
   "dependencies": {
+    "@lucia-auth/adapter-drizzle": "^1.1.0",
     "@t3-oss/env-nextjs": "^0.10.1",
     "@vercel/postgres": "^0.10.0",
+    "arctic": "^1.9.2",
     "drizzle-orm": "^0.33.0",
+    "lucia": "^3.2.0",
     "next": "^14.2.4",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",

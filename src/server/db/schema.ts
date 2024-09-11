@@ -1,11 +1,9 @@
 // Example model schema from the Drizzle docs
 // https://orm.drizzle.team/docs/sql-schema-declaration
 
-import { sql } from "drizzle-orm";
 import {
-  index,
+  integer,
   pgTableCreator,
-  serial,
   timestamp,
   varchar,
 } from "drizzle-orm/pg-core";
@@ -18,19 +16,20 @@ import {
  */
 export const createTable = pgTableCreator((name) => `project-4-v0_${name}`);
 
-export const posts = createTable(
-  "post",
-  {
-    id: serial("id").primaryKey(),
-    name: varchar("name", { length: 256 }),
-    createdAt: timestamp("created_at", { withTimezone: true })
-      .default(sql`CURRENT_TIMESTAMP`)
-      .notNull(),
-    updatedAt: timestamp("updated_at", { withTimezone: true }).$onUpdate(
-      () => new Date(),
-    ),
-  },
-  (example) => ({
-    nameIndex: index("name_idx").on(example.name),
-  }),
-);
+export const User = createTable("user", {
+  id: varchar("id", { length: 255 }).primaryKey(),
+  githubId: integer("github_id").unique(),
+  username: varchar("username", { length: 255 }),
+});
+
+export type User = typeof User.$inferSelect;
+
+export const Session = createTable("session", {
+  id: varchar("id", { length: 255 }).primaryKey(),
+  userId: varchar("user_id", { length: 255 })
+    .references(() => User.id)
+    .notNull(),
+  expiresAt: timestamp("expires_at", { mode: "date" }).notNull(),
+});
+
+export type Session = typeof Session.$inferSelect;
