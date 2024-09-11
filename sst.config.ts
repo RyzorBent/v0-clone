@@ -16,7 +16,13 @@ export default $config({
           event.branch === "main" &&
           event.action === "pushed"
         ) {
-          return { stage: "production" };
+          return {
+            stage: "production",
+            runner: {
+              engine: "codebuild",
+              compute: "large",
+            },
+          };
         }
       },
     },
