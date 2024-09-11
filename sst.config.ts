@@ -28,26 +28,9 @@ export default $config({
     },
   },
   async run() {
-    const secrets = {
-      db: new sst.Secret("DATABASE_URL"),
-      github: [
-        new sst.Secret("GITHUB_CLIENT_ID"),
-        new sst.Secret("GITHUB_CLIENT_SECRET"),
-      ],
-    };
-    const web = new sst.aws.Nextjs("Web", {
-      link: [secrets.db, ...secrets.github],
-      domain:
-        $app.stage === "production"
-          ? {
-              name: "project-4.headstarter.tech",
-              dns: sst.cloudflare.dns({
-                zone: "7a5502a3f47bd7135d313edb536abfbe",
-              }),
-            }
-          : undefined,
-      warm: $app.stage === "production" ? 1 : 0,
-    });
+    await import("./infra/secrets");
+    const { web } = await import("./infra/web");
+
     return {
       web: web.url,
     };
