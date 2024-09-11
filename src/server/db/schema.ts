@@ -41,6 +41,7 @@ export type Session = typeof Session.$inferSelect;
 
 export const Chat = createTable("chat", {
   id: varchar("id", { length: 255 }).primaryKey(),
+  title: varchar("title", { length: 255 }),
   userId: varchar("user_id", { length: 255 })
     .references(() => User.id)
     .notNull(),

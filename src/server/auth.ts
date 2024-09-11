@@ -4,7 +4,7 @@ import type { Session, User } from "lucia";
 import { Lucia } from "lucia";
 import { cookies } from "next/headers";
 import { cache } from "react";
-import { env } from "~/env";
+import { Resource } from "sst";
 import { db } from "./db";
 import * as schema from "./db/schema";
 
@@ -14,7 +14,7 @@ export const lucia = new Lucia(adapter, {
   sessionCookie: {
     expires: false,
     attributes: {
-      secure: env.NODE_ENV === "production",
+      secure: Resource.App.stage === "production",
     },
   },
   getUserAttributes: (user) => ({
@@ -68,6 +68,6 @@ export const validateRequest = cache(
 );
 
 export const github = new GitHub(
-  env.GITHUB_CLIENT_ID,
-  env.GITHUB_CLIENT_SECRET,
+  Resource.GITHUB_CLIENT_ID.value,
+  Resource.GITHUB_CLIENT_SECRET.value,
 );

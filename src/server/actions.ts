@@ -1,12 +1,12 @@
 "use server";
 
 import { generateState } from "arctic";
+import { generateId } from "lucia";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { github, lucia, validateRequest } from "./auth";
-import { Chat, Message } from "./db/schema";
 import { db } from "./db";
-import { generateId } from "lucia";
+import { Chat, Message } from "./db/schema";
 
 export async function createChat(data: FormData) {
   const { user } = await validateRequest();
