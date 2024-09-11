@@ -13,6 +13,15 @@ importers:
       "@lucia-auth/adapter-drizzle":
         specifier: ^1.1.0
         version: 1.1.0(drizzle-orm@0.33.0(@neondatabase/serverless@0.9.5)(@types/pg@8.11.6)(@types/react@18.3.5)(@vercel/postgres@0.10.0)(postgres@3.4.4)(react@18.3.1))(lucia@3.2.0)
+      "@radix-ui/react-icons":
+        specifier: ^1.3.0
+        version: 1.3.0(react@18.3.1)
+      "@radix-ui/react-label":
+        specifier: ^2.1.0
+        version: 2.1.0(@types/react-dom@18.3.0)(@types/react@18.3.5)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      "@radix-ui/react-slot":
+        specifier: ^1.1.0
+        version: 1.1.0(@types/react@18.3.5)(react@18.3.1)
       "@t3-oss/env-nextjs":
         specifier: ^0.10.1
         version: 0.10.1(typescript@5.6.2)(zod@3.23.8)
@@ -22,6 +31,12 @@ importers:
       arctic:
         specifier: ^1.9.2
         version: 1.9.2
+      class-variance-authority:
+        specifier: ^0.7.0
+        version: 0.7.0
+      clsx:
+        specifier: ^2.1.1
+        version: 2.1.1
       drizzle-orm:
         specifier: ^0.33.0
         version: 0.33.0(@neondatabase/serverless@0.9.5)(@types/pg@8.11.6)(@types/react@18.3.5)(@vercel/postgres@0.10.0)(postgres@3.4.4)(react@18.3.1)
@@ -37,6 +52,12 @@ importers:
       react-dom:
         specifier: ^18.3.1
         version: 18.3.1(react@18.3.1)
+      tailwind-merge:
+        specifier: ^2.5.2
+        version: 2.5.2
+      tailwindcss-animate:
+        specifier: ^1.0.7
+        version: 1.0.7(tailwindcss@3.4.10)
       zod:
         specifier: ^3.23.8
         version: 3.23.8
@@ -1370,6 +1391,70 @@ packages:
       }
     engines: { node: ">=14" }
 
+  "@radix-ui/react-compose-refs@1.1.0":
+    resolution:
+      {
+        integrity: sha512-b4inOtiaOnYf9KWyO3jAeeCG6FeyfY6ldiEPanbUjWd+xIk5wZeHa8yVwmrJ2vderhu/BQvzCrJI0lHd+wIiqw==,
+      }
+    peerDependencies:
+      "@types/react": "*"
+      react: ^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc
+    peerDependenciesMeta:
+      "@types/react":
+        optional: true
+
+  "@radix-ui/react-icons@1.3.0":
+    resolution:
+      {
+        integrity: sha512-jQxj/0LKgp+j9BiTXz3O3sgs26RNet2iLWmsPyRz2SIcR4q/4SbazXfnYwbAr+vLYKSfc7qxzyGQA1HLlYiuNw==,
+      }
+    peerDependencies:
+      react: ^16.x || ^17.x || ^18.x
+
+  "@radix-ui/react-label@2.1.0":
+    resolution:
+      {
+        integrity: sha512-peLblDlFw/ngk3UWq0VnYaOLy6agTZZ+MUO/WhVfm14vJGML+xH4FAl2XQGLqdefjNb7ApRg6Yn7U42ZhmYXdw==,
+      }
+    peerDependencies:
+      "@types/react": "*"
+      "@types/react-dom": "*"
+      react: ^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc
+      react-dom: ^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc
+    peerDependenciesMeta:
+      "@types/react":
+        optional: true
+      "@types/react-dom":
+        optional: true
+
+  "@radix-ui/react-primitive@2.0.0":
+    resolution:
+      {
+        integrity: sha512-ZSpFm0/uHa8zTvKBDjLFWLo8dkr4MBsiDLz0g3gMUwqgLHz9rTaRRGYDgvZPtBJgYCBKXkS9fzmoySgr8CO6Cw==,
+      }
+    peerDependencies:
+      "@types/react": "*"
+      "@types/react-dom": "*"
+      react: ^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc
+      react-dom: ^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc
+    peerDependenciesMeta:
+      "@types/react":
+        optional: true
+      "@types/react-dom":
+        optional: true
+
+  "@radix-ui/react-slot@1.1.0":
+    resolution:
+      {
+        integrity: sha512-FUCf5XMfmW4dtYl69pdS4DbxKy8nj4M7SafBgPllysxmdachynNflAdp/gCsnYWNDnge6tI9onzMp5ARYc1KNw==,
+      }
+    peerDependencies:
+      "@types/react": "*"
+      react: ^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc
+    peerDependenciesMeta:
+      "@types/react":
+        optional: true
+
   "@react-hook/intersection-observer@3.1.2":
     resolution:
       {
@@ -1970,6 +2055,12 @@ packages:
       }
     engines: { node: ">= 8.10.0" }
 
+  class-variance-authority@0.7.0:
+    resolution:
+      {
+        integrity: sha512-jFI8IQw4hczaL4ALINxqLEXQbWcNjoSkloa4IaufXCJr6QawJyw7tuRysRsrE8w2p/4gGaxKIt/hX3qz/IbD1A==,
+      }
+
   clean-set@1.1.2:
     resolution:
       {
@@ -1981,6 +2072,20 @@ packages:
       {
         integrity: sha512-IV3Ou0jSMzZrd3pZ48nLkT9DA7Ag1pnPzaiQhpW7c3RbcqqzvzzVu+L8gfqMp/8IM2MQtSiqaCxrrcfu8I8rMA==,
       }
+
+  clsx@2.0.0:
+    resolution:
+      {
+        integrity: sha512-rQ1+kcj+ttHG0MKVGBUXwayCCF1oh39BF5COIpRzuCEv8Mwjv0XucrI2ExNTOn9IlLifGClWQcU9BrZORvtw6Q==,
+      }
+    engines: { node: ">=6" }
+
+  clsx@2.1.1:
+    resolution:
+      {
+        integrity: sha512-eYm0QWBtUrBWZWG0d386OGAw16Z995PiOVo2B7bjWSbHedGl5e0ZWaq65kOGgUSNesEIDkB9ISbTg/JK9dhCZA==,
+      }
+    engines: { node: ">=6" }
 
   color-convert@2.0.1:
     resolution:
@@ -4213,6 +4318,20 @@ packages:
       }
     engines: { node: ">= 0.4" }
 
+  tailwind-merge@2.5.2:
+    resolution:
+      {
+        integrity: sha512-kjEBm+pvD+6eAwzJL2Bi+02/9LFLal1Gs61+QB7HvTfQQ0aXwC5LGT8PEt1gS0CWKktKe6ysPTAy3cBC5MeiIg==,
+      }
+
+  tailwindcss-animate@1.0.7:
+    resolution:
+      {
+        integrity: sha512-bl6mpH3T7I3UFxuvDEXLxy/VuFxBk5bbzplh7tXI68mwMokNYd1t9qPBHlnyTwfa4JGC4zP516I1hYYtQ/vspA==,
+      }
+    peerDependencies:
+      tailwindcss: ">=3.0.0 || insiders"
+
   tailwindcss@3.4.10:
     resolution:
       {
@@ -5092,6 +5211,41 @@ snapshots:
   "@pkgjs/parseargs@0.11.0":
     optional: true
 
+  "@radix-ui/react-compose-refs@1.1.0(@types/react@18.3.5)(react@18.3.1)":
+    dependencies:
+      react: 18.3.1
+    optionalDependencies:
+      "@types/react": 18.3.5
+
+  "@radix-ui/react-icons@1.3.0(react@18.3.1)":
+    dependencies:
+      react: 18.3.1
+
+  "@radix-ui/react-label@2.1.0(@types/react-dom@18.3.0)(@types/react@18.3.5)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)":
+    dependencies:
+      "@radix-ui/react-primitive": 2.0.0(@types/react-dom@18.3.0)(@types/react@18.3.5)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      react: 18.3.1
+      react-dom: 18.3.1(react@18.3.1)
+    optionalDependencies:
+      "@types/react": 18.3.5
+      "@types/react-dom": 18.3.0
+
+  "@radix-ui/react-primitive@2.0.0(@types/react-dom@18.3.0)(@types/react@18.3.5)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)":
+    dependencies:
+      "@radix-ui/react-slot": 1.1.0(@types/react@18.3.5)(react@18.3.1)
+      react: 18.3.1
+      react-dom: 18.3.1(react@18.3.1)
+    optionalDependencies:
+      "@types/react": 18.3.5
+      "@types/react-dom": 18.3.0
+
+  "@radix-ui/react-slot@1.1.0(@types/react@18.3.5)(react@18.3.1)":
+    dependencies:
+      "@radix-ui/react-compose-refs": 1.1.0(@types/react@18.3.5)(react@18.3.1)
+      react: 18.3.1
+    optionalDependencies:
+      "@types/react": 18.3.5
+
   "@react-hook/intersection-observer@3.1.2(react@18.3.1)":
     dependencies:
       "@react-hook/passive-layout-effect": 1.2.1(react@18.3.1)
@@ -5530,9 +5684,17 @@ snapshots:
     optionalDependencies:
       fsevents: 2.3.3
 
+  class-variance-authority@0.7.0:
+    dependencies:
+      clsx: 2.0.0
+
   clean-set@1.1.2: {}
 
   client-only@0.0.1: {}
+
+  clsx@2.0.0: {}
+
+  clsx@2.1.1: {}
 
   color-convert@2.0.1:
     dependencies:
@@ -7013,6 +7175,12 @@ snapshots:
       has-flag: 4.0.0
 
   supports-preserve-symlinks-flag@1.0.0: {}
+
+  tailwind-merge@2.5.2: {}
+
+  tailwindcss-animate@1.0.7(tailwindcss@3.4.10):
+    dependencies:
+      tailwindcss: 3.4.10
 
   tailwindcss@3.4.10:
     dependencies:
