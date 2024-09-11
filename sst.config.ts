@@ -31,11 +31,16 @@ export default $config({
     };
     const web = new sst.aws.Nextjs("Web", {
       link: [secrets.db, ...secrets.github],
-      domain: {
-        name: "project-4.headstarter.tech",
-        dns: sst.cloudflare.dns({ zone: "7a5502a3f47bd7135d313edb536abfbe" }),
-      },
-      warm: 1,
+      domain:
+        $app.stage === "production"
+          ? {
+              name: "project-4.headstarter.tech",
+              dns: sst.cloudflare.dns({
+                zone: "7a5502a3f47bd7135d313edb536abfbe",
+              }),
+            }
+          : undefined,
+      warm: $app.stage === "production" ? 1 : 0,
     });
     return {
       web: web.url,
