@@ -27,6 +27,7 @@ export async function GET(request: Request): Promise<Response> {
     const githubUser = (await githubUserResponse.json()) as {
       id: number;
       login: string;
+      avatar_url: string;
     };
     const [existingUser] = await db
       .select()
@@ -54,6 +55,7 @@ export async function GET(request: Request): Promise<Response> {
       id: userId,
       githubId: githubUser.id,
       username: githubUser.login,
+      image: githubUser.avatar_url,
     });
     const session = await lucia.createSession(userId, {});
     const sessionCookie = lucia.createSessionCookie(session.id);

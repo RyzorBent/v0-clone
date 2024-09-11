@@ -1,9 +1,45 @@
 "use server";
 
 import { generateState } from "arctic";
-import { github, lucia, validateRequest } from "./auth";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
+import { github, lucia, validateRequest } from "./auth";
+import { Chat, Message } from "./db/schema";
+import { db } from "./db";
+import { generateId } from "lucia";
+
+export async function createChat(data: FormData) {
+  const { user } = await validateRequest();
+  if (!user) {
+    return {
+      error: "Unauthorized",
+    };
+  }
+
+  const content = data.get("content");
+  if (!content || typeof content !== "string") {
+    return {
+      error: "Content is required",
+    };
+  }
+
+  const chatId = generateId(15);
+
+  await db.transaction(async (tx) => {
+    await tx.insert(Chat).values({
+      id: chatId,
+      userId: user.id,
+    });
+
+    await tx.insert(Message).values({
+      id: generateId(15),
+      chatId,
+      content,
+    });
+  });
+
+  redirect(`/${chatId}`);
+}
 
 export async function signInWithGitHub() {
   const state = generateState();

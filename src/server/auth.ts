@@ -20,6 +20,7 @@ export const lucia = new Lucia(adapter, {
   getUserAttributes: (user) => ({
     githubId: user.githubId,
     username: user.username,
+    image: user.image,
   }),
 });
 
