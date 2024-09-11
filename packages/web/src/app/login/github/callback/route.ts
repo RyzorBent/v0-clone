@@ -1,10 +1,7 @@
+import { UserAPI } from "@project-4/core/user";
 import { OAuth2RequestError } from "arctic";
-import { eq } from "drizzle-orm";
-import { generateId } from "lucia";
 import { cookies } from "next/headers";
 import { github, lucia } from "~/server/auth";
-import { db } from "~/server/db";
-import { User } from "~/server/db/schema";
 
 export async function GET(request: Request): Promise<Response> {
   const url = new URL(request.url);
@@ -29,34 +26,13 @@ export async function GET(request: Request): Promise<Response> {
       login: string;
       avatar_url: string;
     };
-    const [existingUser] = await db
-      .select()
-      .from(User)
-      .where(eq(User.githubId, githubUser.id));
 
-    if (existingUser) {
-      const session = await lucia.createSession(existingUser.id, {});
-      const sessionCookie = lucia.createSessionCookie(session.id);
-      cookies().set(
-        sessionCookie.name,
-        sessionCookie.value,
-        sessionCookie.attributes,
-      );
-      return new Response(null, {
-        status: 302,
-        headers: {
-          Location: "/",
-        },
-      });
-    }
+    const userId = await UserAPI.findOrCreate(
+      githubUser.id,
+      githubUser.login,
+      githubUser.avatar_url,
+    );
 
-    const userId = generateId(15);
-    await db.insert(User).values({
-      id: userId,
-      githubId: githubUser.id,
-      username: githubUser.login,
-      image: githubUser.avatar_url,
-    });
     const session = await lucia.createSession(userId, {});
     const sessionCookie = lucia.createSessionCookie(session.id);
     cookies().set(
@@ -64,6 +40,7 @@ export async function GET(request: Request): Promise<Response> {
       sessionCookie.value,
       sessionCookie.attributes,
     );
+
     return new Response(null, {
       status: 302,
       headers: {

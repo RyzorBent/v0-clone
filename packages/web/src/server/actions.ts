@@ -1,12 +1,10 @@
 "use server";
 
+import { ChatAPI } from "@project-4/core/chat";
 import { generateState } from "arctic";
-import { generateId } from "lucia";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { github, lucia, validateRequest } from "./auth";
-import { db } from "./db";
-import { Chat, Message } from "./db/schema";
 
 export async function createChat(data: FormData) {
   const { user } = await validateRequest();
@@ -23,20 +21,7 @@ export async function createChat(data: FormData) {
     };
   }
 
-  const chatId = generateId(15);
-
-  await db.transaction(async (tx) => {
-    await tx.insert(Chat).values({
-      id: chatId,
-      userId: user.id,
-    });
-
-    await tx.insert(Message).values({
-      id: generateId(15),
-      chatId,
-      content,
-    });
-  });
+  const chatId = await ChatAPI.create(user.id, content);
 
   redirect(`/${chatId}`);
 }

@@ -1,0 +1,28 @@
+{
+  "name": "@project-4/core",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./*": [
+      "./src/*/index.ts",
+      "./src/*.ts"
+    ]
+  },
+  "scripts": {
+    "db:generate": "sst shell drizzle-kit generate",
+    "db:migrate": "sst shell drizzle-kit migrate",
+    "db:push": "sst shell drizzle-kit push",
+    "db:studio": "sst shell drizzle-kit studio"
+  },
+  "dependencies": {
+    "@neondatabase/serverless": "^0.9.5",
+    "drizzle-orm": "^0.33.0",
+    "nanoid": "^5.0.7",
+    "sst": "catalog:"
+  },
+  "devDependencies": {
+    "@tsconfig/node20": "^20.1.4",
+    "drizzle-kit": "^0.24.0"
+  }
+}

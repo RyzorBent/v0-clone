@@ -1,13 +1,8 @@
-import { db } from "~/server/db";
+import { ChatAPI } from "@project-4/core/chat";
 import { Editor } from "./_components/editor";
 
 export default async function Page({ params }: { params: { id: string } }) {
-  const chat = await db.query.Chat.findFirst({
-    where: (Chat, { eq }) => eq(Chat.id, params.id),
-    with: {
-      messages: true,
-    },
-  });
+  const chat = await ChatAPI.findById(params.id);
 
   return (
     <>

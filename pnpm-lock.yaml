@@ -18,6 +18,28 @@ importers:
         specifier: 'catalog:'
         version: 3.1.2
 
+  packages/core:
+    dependencies:
+      '@neondatabase/serverless':
+        specifier: ^0.9.5
+        version: 0.9.5
+      drizzle-orm:
+        specifier: ^0.33.0
+        version: 0.33.0(@neondatabase/serverless@0.9.5)(@types/pg@8.11.6)(@types/react@18.3.5)(react@18.3.1)
+      nanoid:
+        specifier: ^5.0.7
+        version: 5.0.7
+      sst:
+        specifier: 'catalog:'
+        version: 3.1.2
+    devDependencies:
+      '@tsconfig/node20':
+        specifier: ^20.1.4
+        version: 20.1.4
+      drizzle-kit:
+        specifier: ^0.24.0
+        version: 0.24.2
+
   packages/web:
     dependencies:
       '@codesandbox/sandpack-react':
@@ -29,6 +51,9 @@ importers:
       '@neondatabase/serverless':
         specifier: ^0.9.5
         version: 0.9.5
+      '@project-4/core':
+        specifier: workspace:^
+        version: link:../core
       '@radix-ui/react-avatar':
         specifier: ^1.1.0
         version: 1.1.0(@types/react-dom@18.3.0)(@types/react@18.3.5)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -53,9 +78,6 @@ importers:
       clsx:
         specifier: ^2.1.1
         version: 2.1.1
-      drizzle-orm:
-        specifier: ^0.33.0
-        version: 0.33.0(@neondatabase/serverless@0.9.5)(@types/pg@8.11.6)(@types/react@18.3.5)(react@18.3.1)
       lucia:
         specifier: ^3.2.0
         version: 3.2.0
@@ -102,9 +124,6 @@ importers:
       '@typescript-eslint/parser':
         specifier: ^8.1.0
         version: 8.5.0(eslint@8.57.0)(typescript@5.6.2)
-      drizzle-kit:
-        specifier: ^0.24.0
-        version: 0.24.2
       eslint:
         specifier: ^8.57.0
         version: 8.57.0
@@ -1565,6 +1584,9 @@ packages:
   '@swc/helpers@0.5.5':
     resolution: {integrity: sha512-KGYxvIOXcceOAbEk4bi/dVLEK9z8sZ0uBB3Il5b1rhfClSpcX0yfRO0KmTkqR2cnQDymwLB+25ZyMzICg/cm/A==}
 
+  '@tsconfig/node20@20.1.4':
+    resolution: {integrity: sha512-sqgsT69YFeLWf5NtJ4Xq/xAF8p4ZQHlmGW74Nu2tD4+g5fAsposc4ZfaaPixVu4y01BEiDCWLRDCvDM5JOsRxg==}
+
   '@tybys/wasm-util@0.8.3':
     resolution: {integrity: sha512-Z96T/L6dUFFxgFJ+pQtkPpne9q7i6kIPYCFnQBHSgSPV9idTsKfIhCss0h5iM9irweZCatkrdeP8yi5uM1eX6Q==}
 
@@ -2756,6 +2778,11 @@ packages:
   nanoid@3.3.7:
     resolution: {integrity: sha512-eSRppjcPIatRIMC1U6UngP8XFcz8MQWGQdt1MTBQ7NaAmvXDfvNxbvWV3x2y6CdEUciCSsDHDQZbhYaB8QEo2g==}
     engines: {node: ^10 || ^12 || ^13.7 || ^14 || >=15.0.1}
+    hasBin: true
+
+  nanoid@5.0.7:
+    resolution: {integrity: sha512-oLxFY2gd2IqnjcYyOXD8XGCftpGtZP2AbHbOkthDkvRywH5ayNtPVy9YlOPcHckXzbLTCHpkb7FB+yuxKV13pQ==}
+    engines: {node: ^18 || >=20}
     hasBin: true
 
   natural-compare@1.4.0:
@@ -5087,6 +5114,8 @@ snapshots:
       '@swc/counter': 0.1.3
       tslib: 2.7.0
 
+  '@tsconfig/node20@20.1.4': {}
+
   '@tybys/wasm-util@0.8.3':
     dependencies:
       tslib: 2.7.0
@@ -6529,6 +6558,8 @@ snapshots:
       thenify-all: 1.6.0
 
   nanoid@3.3.7: {}
+
+  nanoid@5.0.7: {}
 
   natural-compare@1.4.0: {}
 
