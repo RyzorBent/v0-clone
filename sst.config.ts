@@ -8,6 +8,19 @@ export default $config({
       home: "aws",
     };
   },
+  console: {
+    autodeploy: {
+      target(event) {
+        if (
+          event.type === "branch" &&
+          event.branch === "main" &&
+          event.action === "pushed"
+        ) {
+          return { stage: "production" };
+        }
+      },
+    },
+  },
   async run() {
     const secrets = {
       db: new sst.Secret("DATABASE_URL"),
