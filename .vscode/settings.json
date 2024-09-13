@@ -1,8 +1,9 @@
 {
-  "typescript.tsdk": "node_modules/typescript/lib",
-  "typescript.enablePromptUseWorkspaceTsdk": true,
+  "editor.wordWrap": "on",
+  "eslint.workingDirectories": [{ "pattern": "packages/*/" }],
   "explorer.autoRevealExclude": {
     "**/.sst": true
   },
-  "editor.wordWrap": "on"
+  "typescript.enablePromptUseWorkspaceTsdk": true,
+  "typescript.tsdk": "node_modules/typescript/lib"
 }
