@@ -8,7 +8,8 @@
     "dev": "remix vite:dev",
     "lint": "eslint --ignore-path .gitignore --cache --cache-location ./node_modules/.cache/eslint .",
     "start": "remix-serve ./build/server/index.js",
-    "typecheck": "tsc"
+    "typecheck": "tsc",
+    "postinstall": "node ./node_modules/aws-crt/scripts/install.js --rebuild"
   },
   "dependencies": {
     "@aws-sdk/signature-v4-crt": "^3.649.0",
