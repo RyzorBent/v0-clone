@@ -22,14 +22,16 @@ export namespace MessagesAPI {
       content: input.content,
       createdAt: new Date(),
     };
-    await db.insert(Message).values(message);
-    await RealtimeAPI.onMessageChanged(message);
-    if (input.role === "user") {
-      await QueueAPI.enqueue({
-        type: "GenerateMessageResponseQueue",
-        body: { message },
-      });
-    }
+    await Promise.all([
+      db.insert(Message).values(message),
+      RealtimeAPI.onMessageChanged(message),
+      message.role === "user"
+        ? QueueAPI.enqueue({
+            type: "GenerateMessageResponseQueue",
+            body: { message },
+          })
+        : Promise.resolve(),
+    ]);
     return message;
   }
 
