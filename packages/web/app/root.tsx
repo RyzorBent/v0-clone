@@ -1,6 +1,6 @@
+import type { LinksFunction, LoaderFunctionArgs } from "@remix-run/node";
 import { ClerkApp } from "@clerk/remix";
 import { rootAuthLoader } from "@clerk/remix/ssr.server";
-import type { LinksFunction, LoaderFunctionArgs } from "@remix-run/node";
 import {
   Links,
   Meta,
@@ -11,7 +11,9 @@ import {
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useRef } from "react";
 import { Resource } from "sst";
+
 import { Toaster } from "~/components/ui/sonner";
+
 import "./tailwind.css";
 
 export const loader = async (args: LoaderFunctionArgs) => {

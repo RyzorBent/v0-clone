@@ -1,8 +1,8 @@
 import type { SerializeFrom } from "@remix-run/node";
-import type { schema } from "@project-4/core/db";
-import { queryOptions } from "@tanstack/react-query";
 
-export type RouteManifest = {
+import type { schema } from "@project-4/core/db";
+
+export interface RouteManifest {
   "/chats": {
     get: {
       response: SerializeFrom<schema.Chat[]>;
@@ -29,7 +29,7 @@ export type RouteManifest = {
       response: SerializeFrom<schema.Message>;
     };
   };
-};
+}
 
 type MethodPath<Method extends "get" | "post" | "delete"> = {
   [K in keyof RouteManifest]: RouteManifest[K] extends {

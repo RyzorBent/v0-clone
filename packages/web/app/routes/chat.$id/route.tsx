@@ -1,6 +1,7 @@
 import type { LoaderFunctionArgs } from "@remix-run/node";
 import { ErrorResponse, useRouteError } from "@remix-run/react";
-import { useState, lazy, Suspense } from "react";
+import { lazy, Suspense, useState } from "react";
+
 import { useSendMessage } from "~/api/hooks";
 import { api } from "~/api/server";
 import { Button } from "~/components/ui/button";

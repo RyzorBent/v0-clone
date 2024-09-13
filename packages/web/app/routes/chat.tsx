@@ -1,8 +1,10 @@
 import { UserButton } from "@clerk/remix";
-import type { schema } from "@project-4/core/db";
 import { LoaderFunctionArgs, SerializeFrom } from "@remix-run/node";
 import { NavLink, Outlet } from "@remix-run/react";
 import { Ellipsis, Loader2, Trash } from "lucide-react";
+
+import type { schema } from "@project-4/core/db";
+
 import { useChats, useCreateChat, useDeleteChat } from "~/api/hooks";
 import { api } from "~/api/server";
 import { Button, buttonVariants } from "~/components/ui/button";
@@ -12,8 +14,8 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "~/components/ui/dropdown-menu";
-import { cn } from "~/lib/utils";
 import { Hydrate } from "~/lib/hydrate";
+import { cn } from "~/lib/utils";
 
 export const loader = async (args: LoaderFunctionArgs) => {
   return await api(args).prefetch((api) => api.query("/chats"));

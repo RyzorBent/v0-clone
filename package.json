@@ -2,6 +2,10 @@
   "name": "project-4-v0",
   "private": true,
   "version": "0.1.0",
+  "engines": {
+    "node": ">=20.16.0"
+  },
+  "packageManager": "pnpm@9.10.0",
   "scripts": {
     "clean": "pnpm -r run clean && git clean -xdf .sst node_modules",
     "dev": "sst dev",
@@ -10,10 +14,8 @@
     "deploy": "sst deploy",
     "remove": "sst remove"
   },
-  "dependencies": {
-    "sst": "catalog:"
-  },
   "devDependencies": {
+    "sst": "catalog:",
     "typescript": "catalog:"
   }
 }

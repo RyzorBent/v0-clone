@@ -1,6 +1,6 @@
-import { iot, mqtt } from "aws-iot-device-sdk-v2";
 import { EventEmitter } from "events";
 import type TypedEventEmitter from "typed-emitter";
+import { iot, mqtt } from "aws-iot-device-sdk-v2";
 
 export interface RealTimeOptions {
   endpoint: string;

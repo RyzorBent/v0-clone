@@ -1,9 +1,10 @@
 import { writeFile } from "node:fs/promises";
 import type { z } from "zod";
+
+import type { registryItemFileSchema } from "./schema";
 import {
   registryBaseColorSchema,
   registryIndexSchema,
-  type registryItemFileSchema,
   registryItemSchema,
 } from "./schema";
 import {

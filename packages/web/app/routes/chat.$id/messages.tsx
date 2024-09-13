@@ -1,5 +1,7 @@
-import type { schema } from "@project-4/core/db";
 import type { SerializeFrom } from "@remix-run/node";
+
+import type { schema } from "@project-4/core/db";
+
 import { useCurrentChat } from "./hooks";
 
 export function Messages() {

@@ -6,6 +6,7 @@ import {
   QueryClient,
 } from "@tanstack/react-query";
 import { Resource } from "sst";
+
 import { APIClient } from "./client";
 
 export function api(args: LoaderFunctionArgs) {
