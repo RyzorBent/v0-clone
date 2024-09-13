@@ -83,6 +83,9 @@ importers:
 
   packages/web:
     dependencies:
+      '@aws-sdk/signature-v4-crt':
+        specifier: ^3.649.0
+        version: 3.649.0
       '@clerk/remix':
         specifier: ^4.2.25
         version: 4.2.25(@remix-run/react@2.12.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.6.2))(@remix-run/server-runtime@2.12.0(typescript@5.6.2))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -383,6 +386,10 @@ packages:
     resolution: {integrity: sha512-IPnO4wlmaLRf6IYmJW2i8gJ2+UPXX0hDRv1it7Qf8DpBW+lGyF2rnoN7NrFX0WIxdGOlJF1RcOr/HjXb2QeXfQ==}
     engines: {node: '>=16.0.0'}
 
+  '@aws-sdk/middleware-sdk-s3@3.649.0':
+    resolution: {integrity: sha512-3H8735xTAD7IxNdreT6qv2YRk4CGOGfz8ufZo5pROJYZ4N5rfcdDMvb8szMSLvQHegqS4v1DqO9nrOPgc0I2Qg==}
+    engines: {node: '>=16.0.0'}
+
   '@aws-sdk/middleware-sdk-sqs@3.649.0':
     resolution: {integrity: sha512-ifuBdP4onwjdQ3NuneW6s6Ev4wPR/D+4PJbEV6aJqutHkTsp5aKemVCxkjl8KTchMtE6ICst0SHy1t20FZpmDw==}
     engines: {node: '>=16.0.0'}
@@ -407,6 +414,14 @@ packages:
     resolution: {integrity: sha512-xURBvdQXvRvca5Du8IlC5FyCj3pkw8Z75+373J3Wb+vyg8GjD14HfKk1Je1HCCQDyIE9VB/scYDcm9ri0ppePw==}
     engines: {node: '>=16.0.0'}
 
+  '@aws-sdk/signature-v4-crt@3.649.0':
+    resolution: {integrity: sha512-fpTF+eTBanmTdgXb5fDogosGZlPJZqlNIkwcRFMbIQlHTIPzCH7EkWeASBcckwaF4d66FgUvTmGuS3J5Wwio+w==}
+    engines: {node: '>=16.0.0'}
+
+  '@aws-sdk/signature-v4-multi-region@3.649.0':
+    resolution: {integrity: sha512-feJfSHtCarFmTMZSE5k7/A+m4FrdCrmotljc/AmXArWy3wl8XFyxE5tFVW/PiUgbgeoVDN+ZLt3YYtItHfNUWQ==}
+    engines: {node: '>=16.0.0'}
+
   '@aws-sdk/token-providers@3.478.0':
     resolution: {integrity: sha512-7b5tj1y/wGHZIZ+ckjOUKgKrMuCJMF/G1UKZKIqqdekeEsjcThbvoxAMeY0FEowu2ODVk/ggOmpBFxcu0iYd6A==}
     engines: {node: '>=14.0.0'}
@@ -423,6 +438,10 @@ packages:
 
   '@aws-sdk/types@3.649.0':
     resolution: {integrity: sha512-PuPw8RysbhJNlaD2d/PzOTf8sbf4Dsn2b7hwyGh7YVG3S75yTpxSAZxrnhKsz9fStgqFmnw/jUfV/G+uQAeTVw==}
+    engines: {node: '>=16.0.0'}
+
+  '@aws-sdk/util-arn-parser@3.568.0':
+    resolution: {integrity: sha512-XUKJWWo+KOB7fbnPP0+g/o5Ulku/X53t7i/h+sPHr5xxYTJJ9CYnbToo95mzxe7xWvkLrsNtJ8L+MnNn9INs2w==}
     engines: {node: '>=16.0.0'}
 
   '@aws-sdk/util-endpoints@3.478.0':
@@ -5752,7 +5771,7 @@ snapshots:
   '@aws-crypto/crc32@3.0.0':
     dependencies:
       '@aws-crypto/util': 3.0.0
-      '@aws-sdk/types': 3.649.0
+      '@aws-sdk/types': 3.468.0
       tslib: 1.14.1
 
   '@aws-crypto/ie11-detection@3.0.0':
@@ -5765,7 +5784,7 @@ snapshots:
       '@aws-crypto/sha256-js': 3.0.0
       '@aws-crypto/supports-web-crypto': 3.0.0
       '@aws-crypto/util': 3.0.0
-      '@aws-sdk/types': 3.649.0
+      '@aws-sdk/types': 3.468.0
       '@aws-sdk/util-locate-window': 3.568.0
       '@aws-sdk/util-utf8-browser': 3.259.0
       tslib: 1.14.1
@@ -5783,7 +5802,7 @@ snapshots:
   '@aws-crypto/sha256-js@3.0.0':
     dependencies:
       '@aws-crypto/util': 3.0.0
-      '@aws-sdk/types': 3.649.0
+      '@aws-sdk/types': 3.468.0
       tslib: 1.14.1
 
   '@aws-crypto/sha256-js@5.2.0':
@@ -5802,7 +5821,7 @@ snapshots:
 
   '@aws-crypto/util@3.0.0':
     dependencies:
-      '@aws-sdk/types': 3.649.0
+      '@aws-sdk/types': 3.468.0
       '@aws-sdk/util-utf8-browser': 3.259.0
       tslib: 1.14.1
 
@@ -6389,6 +6408,23 @@ snapshots:
       '@smithy/types': 3.4.0
       tslib: 2.7.0
 
+  '@aws-sdk/middleware-sdk-s3@3.649.0':
+    dependencies:
+      '@aws-sdk/core': 3.649.0
+      '@aws-sdk/types': 3.649.0
+      '@aws-sdk/util-arn-parser': 3.568.0
+      '@smithy/core': 2.4.1
+      '@smithy/node-config-provider': 3.1.5
+      '@smithy/protocol-http': 4.1.1
+      '@smithy/signature-v4': 4.1.1
+      '@smithy/smithy-client': 3.3.0
+      '@smithy/types': 3.4.0
+      '@smithy/util-config-provider': 3.0.0
+      '@smithy/util-middleware': 3.0.4
+      '@smithy/util-stream': 3.1.4
+      '@smithy/util-utf8': 3.0.0
+      tslib: 2.7.0
+
   '@aws-sdk/middleware-sdk-sqs@3.649.0':
     dependencies:
       '@aws-sdk/types': 3.649.0
@@ -6439,6 +6475,32 @@ snapshots:
       '@smithy/types': 3.4.0
       '@smithy/util-config-provider': 3.0.0
       '@smithy/util-middleware': 3.0.4
+      tslib: 2.7.0
+
+  '@aws-sdk/signature-v4-crt@3.649.0':
+    dependencies:
+      '@aws-sdk/signature-v4-multi-region': 3.649.0
+      '@aws-sdk/types': 3.649.0
+      '@aws-sdk/util-user-agent-node': 3.649.0(aws-crt@1.22.0)
+      '@smithy/querystring-parser': 3.0.4
+      '@smithy/signature-v4': 4.1.1
+      '@smithy/types': 3.4.0
+      '@smithy/util-middleware': 3.0.4
+      aws-crt: 1.22.0
+      tslib: 2.7.0
+    transitivePeerDependencies:
+      - bufferutil
+      - debug
+      - supports-color
+      - utf-8-validate
+
+  '@aws-sdk/signature-v4-multi-region@3.649.0':
+    dependencies:
+      '@aws-sdk/middleware-sdk-s3': 3.649.0
+      '@aws-sdk/types': 3.649.0
+      '@smithy/protocol-http': 4.1.1
+      '@smithy/signature-v4': 4.1.1
+      '@smithy/types': 3.4.0
       tslib: 2.7.0
 
   '@aws-sdk/token-providers@3.478.0(aws-crt@1.22.0)':
@@ -6500,6 +6562,10 @@ snapshots:
   '@aws-sdk/types@3.649.0':
     dependencies:
       '@smithy/types': 3.4.0
+      tslib: 2.7.0
+
+  '@aws-sdk/util-arn-parser@3.568.0':
+    dependencies:
       tslib: 2.7.0
 
   '@aws-sdk/util-endpoints@3.478.0':
@@ -8682,7 +8748,7 @@ snapshots:
       '@babel/plugin-syntax-typescript': 7.25.4(@babel/core@7.25.2)
       '@vanilla-extract/babel-plugin-debug-ids': 1.0.6
       '@vanilla-extract/css': 1.15.5
-      esbuild: 0.19.12
+      esbuild: 0.17.6
       eval: 0.1.8
       find-up: 5.0.0
       javascript-stringify: 2.1.0
@@ -9302,7 +9368,7 @@ snapshots:
   dot-case@3.0.4:
     dependencies:
       no-case: 3.0.4
-      tslib: 2.7.0
+      tslib: 2.4.1
 
   dotenv@16.4.5: {}
 
@@ -10542,7 +10608,7 @@ snapshots:
 
   lower-case@2.0.2:
     dependencies:
-      tslib: 2.7.0
+      tslib: 2.4.1
 
   lru-cache@10.4.3: {}
 
@@ -11074,7 +11140,7 @@ snapshots:
   no-case@3.0.4:
     dependencies:
       lower-case: 2.0.2
-      tslib: 2.7.0
+      tslib: 2.4.1
 
   node-domexception@1.0.0: {}
 
@@ -11819,7 +11885,7 @@ snapshots:
   snake-case@3.0.4:
     dependencies:
       dot-case: 3.0.4
-      tslib: 2.7.0
+      tslib: 2.4.1
 
   snakecase-keys@5.4.4:
     dependencies:

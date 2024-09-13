@@ -11,6 +11,7 @@
     "typecheck": "tsc"
   },
   "dependencies": {
+    "@aws-sdk/signature-v4-crt": "^3.649.0",
     "@clerk/remix": "^4.2.25",
     "@codesandbox/sandpack-react": "^2.19.5",
     "@radix-ui/react-dropdown-menu": "^2.1.1",
