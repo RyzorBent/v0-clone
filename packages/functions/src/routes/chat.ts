@@ -1,5 +1,3 @@
-import "@project-4/core/polyfill";
-
 import { ChatAPI } from "@project-4/core/chat";
 import type { APIGatewayProxyEventV2WithJWTAuthorizer } from "aws-lambda";
 

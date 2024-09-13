@@ -1,5 +1,3 @@
-import "@project-4/core/polyfill";
-
 import { MessagesAPI } from "@project-4/core/messages";
 import { APIGatewayProxyEventV2WithJWTAuthorizer } from "aws-lambda";
 
