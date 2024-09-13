@@ -1,19 +1,22 @@
-import { type LoaderFunctionArgs } from "@remix-run/node";
+import type { LoaderFunctionArgs } from "@remix-run/node";
 import { ErrorResponse, useRouteError } from "@remix-run/react";
-import { useState } from "react";
+import { lazy, useState } from "react";
 import { useSendMessage } from "~/api/hooks";
 import { api } from "~/api/server";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { withHydrationBoundary } from "~/lib/with-hydration-boundary";
 import { useChatConnection, useCurrentChat } from "./hooks";
-import { Editor } from "./editor";
 
 export const loader = async (args: LoaderFunctionArgs) => {
   return await api(args).prefetch((api) =>
     api.query("/chats/:id", { params: { id: args.params.id! } }),
   );
 };
+
+const Editor = lazy(() =>
+  import("./editor").then((m) => ({ default: m.Editor })),
+);
 
 export default withHydrationBoundary(function Chat() {
   const chat = useCurrentChat();
