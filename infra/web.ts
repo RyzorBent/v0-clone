@@ -17,7 +17,7 @@ export const web = new sst.aws.Remix("Web", {
   domain:
     $app.stage === "production"
       ? {
-          name: "project-4.headstarter.tech",
+          name: "v0.headstarter.tech",
           dns,
         }
       : undefined,

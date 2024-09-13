@@ -16,7 +16,7 @@ export const api = new sst.aws.ApiGatewayV2("API", {
     allowCredentials: true,
     allowOrigins: [
       $app.stage === "production"
-        ? "https://project-4.headstarter.tech"
+        ? "https://v0.headstarter.tech"
         : "http://localhost:5173",
     ],
   },
