@@ -29,6 +29,12 @@ export const api = new sst.aws.ApiGatewayV2("API", {
           generateMessageResponseQueue,
           generateChatTitleQueue,
         ],
+        permissions: [
+          {
+            actions: ["iot:*"],
+            resources: ["*"],
+          },
+        ],
       },
     },
   },
