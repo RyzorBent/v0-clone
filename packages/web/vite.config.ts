@@ -13,4 +13,9 @@ export default defineConfig({
     }),
     tsconfigPaths(),
   ],
+  build: {
+    rollupOptions: {
+      external: ["aws-iot-device-sdk-v2", "aws-crt"],
+    },
+  },
 });
