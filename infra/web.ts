@@ -25,4 +25,11 @@ export const web = new sst.aws.Remix("Web", {
   dev: {
     url: "http://localhost:5173",
   },
+  transform: {
+    server: {
+      nodejs: {
+        install: ["aws-crt"],
+      },
+    },
+  },
 });
