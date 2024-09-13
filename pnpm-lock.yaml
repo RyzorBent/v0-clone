@@ -46,7 +46,7 @@ importers:
         version: 5.0.7
       openai:
         specifier: ^4.60.1
-        version: 4.60.1(zod@3.23.8)
+        version: 4.60.1(encoding@0.1.13)(zod@3.23.8)
       sst:
         specifier: 'catalog:'
         version: 3.1.9(aws-crt@1.21.8)
@@ -82,6 +82,33 @@ importers:
       '@types/aws-lambda':
         specifier: ^8.10.145
         version: 8.10.145
+
+  packages/scripts:
+    devDependencies:
+      '@pinecone-database/pinecone':
+        specifier: ^3.0.3
+        version: 3.0.3
+      '@project-4/core':
+        specifier: workspace:*
+        version: link:../core
+      '@tsconfig/node20':
+        specifier: ^20.1.4
+        version: 20.1.4
+      '@types/node':
+        specifier: ^20.16.5
+        version: 20.16.5
+      openai:
+        specifier: ^4.60.1
+        version: 4.60.1(encoding@0.1.13)(zod@3.23.8)
+      sst:
+        specifier: 'catalog:'
+        version: 3.1.9(aws-crt@1.21.8)
+      tsx:
+        specifier: ^4.19.1
+        version: 4.19.1
+      zod:
+        specifier: 'catalog:'
+        version: 3.23.8
 
   packages/web:
     dependencies:
@@ -206,9 +233,6 @@ importers:
       tailwindcss:
         specifier: ^3.4.11
         version: 3.4.11
-      tsx:
-        specifier: ^4.19.1
-        version: 4.19.1
       typed-emitter:
         specifier: ^2.1.0
         version: 2.1.0
@@ -221,9 +245,6 @@ importers:
       vite-tsconfig-paths:
         specifier: ^4.3.2
         version: 4.3.2(typescript@5.6.2)(vite@5.4.5(@types/node@20.16.5))
-      zod:
-        specifier: 'catalog:'
-        version: 3.23.8
 
 packages:
 
@@ -1529,6 +1550,10 @@ packages:
 
   '@open-draft/deferred-promise@2.2.0':
     resolution: {integrity: sha512-CecwLWx3rhxVQF6V4bAgPS5t+So2sTbPgAzafKkVizyi7tlwpcFpdFqq+wqF2OwNBmqFuu6tOyouTuxgpMfzmA==}
+
+  '@pinecone-database/pinecone@3.0.3':
+    resolution: {integrity: sha512-0cAG0d/6knVZgVyXM1II4qG3dyOepLuAQsCXTOJomdA7iQxf+/Om9mq9Cw4QObr56oZ+lqtptlw5qz0BQaBX2Q==}
+    engines: {node: '>=18.0.0'}
 
   '@pkgjs/parseargs@0.11.0':
     resolution: {integrity: sha512-+1VkjdD0QBLPodGrJUeqarH8VAIvQODIbwh9XpP5Syisf7YoQgsJKPNFoqqLQlu+VQ/tVSshMR6loPMn8U+dPg==}
@@ -3120,6 +3145,9 @@ packages:
     resolution: {integrity: sha512-Q0n9HRi4m6JuGIV1eFlmvJB7ZEVxu93IrMyiMsGC0lrMJMWzRgx6WGquyfQgZVb31vhGgXnfmPNNXmxnOkRBrg==}
     engines: {node: '>= 0.8'}
 
+  encoding@0.1.13:
+    resolution: {integrity: sha512-ETBauow1T35Y/WZMkio9jiM0Z5xjHHmJ4XmjZOq1l/dXz3lr2sRn87nJy20RupqSh1F2m3HHPSp8ShIPQJrJ3A==}
+
   end-of-stream@1.4.4:
     resolution: {integrity: sha512-+uw1inIHVPQoaVuHzRyXd21icM+cnt4CzD5rW+NC1wjOUSTOs+Te7FOv7AhN7vS9x/oIyhLP5PR1H+phQAHu5Q==}
 
@@ -3658,6 +3686,10 @@ packages:
 
   iconv-lite@0.4.24:
     resolution: {integrity: sha512-v3MXnZAcvnywkTUEZomIActle7RXXeedOR31wwl7VlyoXO4Qi9arvSenNQWne1TcRwhCL1HwLI21bEqdpj8/rA==}
+    engines: {node: '>=0.10.0'}
+
+  iconv-lite@0.6.3:
+    resolution: {integrity: sha512-4fCk79wshMdzMp2rH06qWrJE4iolqLhCUH+OiuIgU++RB0+94NlDL81atO7GX55uUKueo0txHNtvEyI6D7WdMw==}
     engines: {node: '>=0.10.0'}
 
   icss-utils@5.1.0:
@@ -5725,7 +5757,7 @@ snapshots:
   '@aws-crypto/crc32@3.0.0':
     dependencies:
       '@aws-crypto/util': 3.0.0
-      '@aws-sdk/types': 3.468.0
+      '@aws-sdk/types': 3.649.0
       tslib: 1.14.1
 
   '@aws-crypto/ie11-detection@3.0.0':
@@ -5738,7 +5770,7 @@ snapshots:
       '@aws-crypto/sha256-js': 3.0.0
       '@aws-crypto/supports-web-crypto': 3.0.0
       '@aws-crypto/util': 3.0.0
-      '@aws-sdk/types': 3.468.0
+      '@aws-sdk/types': 3.649.0
       '@aws-sdk/util-locate-window': 3.568.0
       '@aws-sdk/util-utf8-browser': 3.259.0
       tslib: 1.14.1
@@ -5756,7 +5788,7 @@ snapshots:
   '@aws-crypto/sha256-js@3.0.0':
     dependencies:
       '@aws-crypto/util': 3.0.0
-      '@aws-sdk/types': 3.468.0
+      '@aws-sdk/types': 3.649.0
       tslib: 1.14.1
 
   '@aws-crypto/sha256-js@5.2.0':
@@ -5775,7 +5807,7 @@ snapshots:
 
   '@aws-crypto/util@3.0.0':
     dependencies:
-      '@aws-sdk/types': 3.468.0
+      '@aws-sdk/types': 3.649.0
       '@aws-sdk/util-utf8-browser': 3.259.0
       tslib: 1.14.1
 
@@ -7457,6 +7489,10 @@ snapshots:
 
   '@open-draft/deferred-promise@2.2.0': {}
 
+  '@pinecone-database/pinecone@3.0.3':
+    dependencies:
+      encoding: 0.1.13
+
   '@pkgjs/parseargs@0.11.0':
     optional: true
 
@@ -8667,7 +8703,7 @@ snapshots:
       '@babel/plugin-syntax-typescript': 7.25.4(@babel/core@7.25.2)
       '@vanilla-extract/babel-plugin-debug-ids': 1.0.6
       '@vanilla-extract/css': 1.15.5
-      esbuild: 0.17.6
+      esbuild: 0.19.12
       eval: 0.1.8
       find-up: 5.0.0
       javascript-stringify: 2.1.0
@@ -9310,6 +9346,10 @@ snapshots:
   encodeurl@1.0.2: {}
 
   encodeurl@2.0.0: {}
+
+  encoding@0.1.13:
+    dependencies:
+      iconv-lite: 0.6.3
 
   end-of-stream@1.4.4:
     dependencies:
@@ -10186,6 +10226,10 @@ snapshots:
     dependencies:
       safer-buffer: 2.1.2
 
+  iconv-lite@0.6.3:
+    dependencies:
+      safer-buffer: 2.1.2
+
   icss-utils@5.1.0(postcss@8.4.45):
     dependencies:
       postcss: 8.4.45
@@ -11001,9 +11045,11 @@ snapshots:
 
   node-domexception@1.0.0: {}
 
-  node-fetch@2.7.0:
+  node-fetch@2.7.0(encoding@0.1.13):
     dependencies:
       whatwg-url: 5.0.0
+    optionalDependencies:
+      encoding: 0.1.13
 
   node-releases@2.0.18: {}
 
@@ -11118,7 +11164,7 @@ snapshots:
     dependencies:
       mimic-fn: 2.1.0
 
-  openai@4.60.1(zod@3.23.8):
+  openai@4.60.1(encoding@0.1.13)(zod@3.23.8):
     dependencies:
       '@types/node': 18.19.50
       '@types/node-fetch': 2.6.11
@@ -11127,7 +11173,7 @@ snapshots:
       agentkeepalive: 4.5.0
       form-data-encoder: 1.7.2
       formdata-node: 4.4.1
-      node-fetch: 2.7.0
+      node-fetch: 2.7.0(encoding@0.1.13)
       qs: 6.13.0
     optionalDependencies:
       zod: 3.23.8

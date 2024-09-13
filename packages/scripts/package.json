@@ -1,0 +1,20 @@
+{
+  "name": "@project-4/scripts",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "clean": "git clean -xdf node_modules",
+    "shell": "sst shell -- tsx"
+  },
+  "devDependencies": {
+    "@pinecone-database/pinecone": "^3.0.3",
+    "@project-4/core": "workspace:*",
+    "@tsconfig/node20": "^20.1.4",
+    "@types/node": "^20.16.5",
+    "openai": "^4.60.1",
+    "sst": "catalog:",
+    "tsx": "^4.19.1",
+    "zod": "catalog:"
+  }
+}

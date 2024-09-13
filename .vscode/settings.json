@@ -2,7 +2,8 @@
   "editor.wordWrap": "on",
   "eslint.workingDirectories": [{ "pattern": "packages/*/" }],
   "explorer.autoRevealExclude": {
-    "**/.sst": true
+    "**/.sst": true,
+    "**/node_modules": true
   },
   "typescript.enablePromptUseWorkspaceTsdk": true,
   "typescript.tsdk": "node_modules/typescript/lib"

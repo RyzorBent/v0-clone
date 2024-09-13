@@ -37,6 +37,10 @@ declare module "sst" {
       "type": "sst.sst.Secret"
       "value": string
     }
+    "PINECONE_API_KEY": {
+      "type": "sst.sst.Secret"
+      "value": string
+    }
     "Realtime": {
       "authorizer": string
       "endpoint": string

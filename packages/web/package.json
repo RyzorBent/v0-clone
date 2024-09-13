@@ -57,12 +57,10 @@
     "prettier": "^3.3.3",
     "prettier-plugin-tailwindcss": "^0.6.6",
     "tailwindcss": "^3.4.11",
-    "tsx": "^4.19.1",
     "typed-emitter": "^2.1.0",
     "typescript": "catalog:",
     "vite": "^5.4.5",
-    "vite-tsconfig-paths": "^4.3.2",
-    "zod": "catalog:"
+    "vite-tsconfig-paths": "^4.3.2"
   },
   "engines": {
     "node": ">=20.0.0"
