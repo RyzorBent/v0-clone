@@ -18,4 +18,7 @@ export default defineConfig({
       external: ["aws-iot-device-sdk-v2", "aws-crt"],
     },
   },
+  ssr: {
+    noExternal: ["aws-iot-device-sdk-v2", "aws-crt"],
+  },
 });
