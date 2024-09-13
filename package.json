@@ -3,11 +3,11 @@
   "private": true,
   "version": "0.1.0",
   "engines": {
-    "node": ">=20.16.0"
+    "node": "^20.17.0"
   },
   "packageManager": "pnpm@9.10.0",
   "scripts": {
-    "clean": "pnpm -r run clean && git clean -xdf .sst node_modules",
+    "clean": "git clean -xdf .sst node_modules && pnpm -r clean",
     "dev": "sst dev",
     "start": "sst start",
     "build": "sst build",
