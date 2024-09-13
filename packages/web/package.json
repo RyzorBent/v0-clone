@@ -8,8 +8,7 @@
     "dev": "remix vite:dev",
     "lint": "eslint --ignore-path .gitignore --cache --cache-location ./node_modules/.cache/eslint .",
     "start": "remix-serve ./build/server/index.js",
-    "typecheck": "tsc",
-    "postinstall": "node ./node_modules/aws-crt/scripts/install.js --rebuild"
+    "typecheck": "tsc"
   },
   "dependencies": {
     "@aws-sdk/signature-v4-crt": "^3.649.0",
@@ -21,7 +20,6 @@
     "@remix-run/react": "^2.12.0",
     "@remix-run/serve": "^2.12.0",
     "@tanstack/react-query": "^5.56.2",
-    "aws-crt": "^1.22.0",
     "aws-iot-device-sdk-v2": "^1.21.1",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
