@@ -13,13 +13,21 @@ import {
   DropdownMenuTrigger,
 } from "~/components/ui/dropdown-menu";
 import { cn } from "~/lib/utils";
-import { withHydrationBoundary } from "~/lib/with-hydration-boundary";
+import { Hydrate } from "~/lib/hydrate";
 
 export const loader = async (args: LoaderFunctionArgs) => {
   return await api(args).prefetch((api) => api.query("/chats"));
 };
 
-export default withHydrationBoundary(function Chats() {
+export default function Page() {
+  return (
+    <Hydrate>
+      <Chats />
+    </Hydrate>
+  );
+}
+
+function Chats() {
   const chats = useChats();
   const createChat = useCreateChat();
 
@@ -47,7 +55,7 @@ export default withHydrationBoundary(function Chats() {
       <Outlet />
     </div>
   );
-});
+}
 
 function ChatItem({ chat }: { chat: SerializeFrom<schema.Chat> }) {
   const deleteChat = useDeleteChat();

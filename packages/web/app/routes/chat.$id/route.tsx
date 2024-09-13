@@ -1,11 +1,11 @@
 import type { LoaderFunctionArgs } from "@remix-run/node";
 import { ErrorResponse, useRouteError } from "@remix-run/react";
-import { lazy, useState } from "react";
+import { useState, lazy, Suspense } from "react";
 import { useSendMessage } from "~/api/hooks";
 import { api } from "~/api/server";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
-import { withHydrationBoundary } from "~/lib/with-hydration-boundary";
+import { Hydrate } from "~/lib/hydrate";
 import { useChatConnection, useCurrentChat } from "./hooks";
 
 export const loader = async (args: LoaderFunctionArgs) => {
@@ -15,10 +15,18 @@ export const loader = async (args: LoaderFunctionArgs) => {
 };
 
 const Editor = lazy(() =>
-  import("./editor").then((m) => ({ default: m.Editor })),
+  import("./editor").then((mod) => ({ default: mod.Editor })),
 );
 
-export default withHydrationBoundary(function Chat() {
+export default function Page() {
+  return (
+    <Hydrate>
+      <Chat />
+    </Hydrate>
+  );
+}
+
+function Chat() {
   const chat = useCurrentChat();
 
   useChatConnection();
@@ -35,11 +43,13 @@ export default withHydrationBoundary(function Chat() {
         </div>
       </div>
       <div className="flex flex-col">
-        <Editor />
+        <Suspense>
+          <Editor />
+        </Suspense>
       </div>
     </main>
   );
-});
+}
 
 function MessageInput({ id }: { id: string }) {
   const [message, setMessage] = useState("");
