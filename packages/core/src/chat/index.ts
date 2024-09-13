@@ -1,30 +1,55 @@
+import { and, eq } from "drizzle-orm";
 import { nanoid } from "nanoid";
-import { db } from "../db";
-import { Chat, Message } from "../db/schema";
+import { z } from "zod";
+import { db, InsertModel } from "../db";
+import { Chat } from "../db/schema";
 
 export namespace ChatAPI {
-  export async function create(userId: string, messageContent: string) {
-    return await db.transaction(async (tx) => {
-      const chatId = nanoid();
-      await tx.insert(Chat).values({
-        id: chatId,
-        userId,
-      });
-      await tx.insert(Message).values({
-        id: nanoid(),
-        chatId,
-        content: messageContent,
-      });
-      return chatId;
-    });
+  export const UpdateInput = z.object({
+    title: z.string().optional(),
+  });
+
+  export async function index(userId: string) {
+    const chats = await db.select().from(Chat).where(eq(Chat.userId, userId));
+    return chats;
   }
 
-  export async function findById(id: string) {
-    return await db.query.Chat.findFirst({
-      where: (Chat, { eq }) => eq(Chat.id, id),
+  export async function get(chatId: string, userId: string | null = null) {
+    const chat = await db.query.Chat.findFirst({
+      where: and(
+        eq(Chat.id, chatId),
+        userId ? eq(Chat.userId, userId) : undefined
+      ),
       with: {
         messages: true,
       },
     });
+    return chat;
+  }
+
+  export async function create(userId: string) {
+    const chat: InsertModel["Chat"] = {
+      id: nanoid(),
+      userId,
+    };
+    await db.insert(Chat).values(chat);
+    return chat;
+  }
+
+  export async function update(
+    chatId: string,
+    userId: string | null,
+    input: z.infer<typeof UpdateInput>
+  ) {
+    await db
+      .update(Chat)
+      .set(input)
+      .where(
+        and(eq(Chat.id, chatId), userId ? eq(Chat.userId, userId) : undefined)
+      );
+  }
+
+  export async function del(id: string, userId: string) {
+    await db.delete(Chat).where(and(eq(Chat.id, id), eq(Chat.userId, userId)));
   }
 }

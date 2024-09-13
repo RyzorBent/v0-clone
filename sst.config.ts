@@ -29,9 +29,13 @@ export default $config({
   },
   async run() {
     await import("./infra/secrets");
+    await import("./infra/realtime");
+    await import("./infra/queue");
     const { web } = await import("./infra/web");
+    const { api } = await import("./infra/api");
 
     return {
+      api: api.url,
       web: web.url,
     };
   },

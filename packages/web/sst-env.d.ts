@@ -5,20 +5,45 @@ import "sst"
 export {}
 declare module "sst" {
   export interface Resource {
+    "API": {
+      "type": "sst.aws.ApiGatewayV2"
+      "url": string
+    }
+    "CLERK_ISSUER": {
+      "type": "sst.sst.Secret"
+      "value": string
+    }
+    "CLERK_PUBLISHABLE_KEY": {
+      "type": "sst.sst.Secret"
+      "value": string
+    }
+    "CLERK_SECRET_KEY": {
+      "type": "sst.sst.Secret"
+      "value": string
+    }
     "DATABASE_URL": {
       "type": "sst.sst.Secret"
       "value": string
     }
-    "GITHUB_CLIENT_ID": {
+    "GenerateChatTitleQueue": {
+      "type": "sst.aws.Queue"
+      "url": string
+    }
+    "GenerateMessageResponseQueue": {
+      "type": "sst.aws.Queue"
+      "url": string
+    }
+    "OPENAI_API_KEY": {
       "type": "sst.sst.Secret"
       "value": string
     }
-    "GITHUB_CLIENT_SECRET": {
-      "type": "sst.sst.Secret"
-      "value": string
+    "Realtime": {
+      "authorizer": string
+      "endpoint": string
+      "type": "sst.aws.Realtime"
     }
     "Web": {
-      "type": "sst.aws.Nextjs"
+      "type": "sst.aws.Remix"
       "url": string
     }
   }

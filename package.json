@@ -12,5 +12,8 @@
   },
   "dependencies": {
     "sst": "catalog:"
+  },
+  "devDependencies": {
+    "typescript": "catalog:"
   }
 }

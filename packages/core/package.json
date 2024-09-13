@@ -16,13 +16,19 @@
     "db:studio": "sst shell drizzle-kit studio"
   },
   "dependencies": {
+    "@aws-sdk/client-iot-data-plane": "^3.650.0",
+    "@aws-sdk/client-sqs": "^3.650.0",
     "@neondatabase/serverless": "^0.9.5",
     "drizzle-orm": "^0.33.0",
     "nanoid": "^5.0.7",
-    "sst": "catalog:"
+    "openai": "^4.60.0",
+    "sst": "catalog:",
+    "zod": "^3.23.8"
   },
   "devDependencies": {
     "@tsconfig/node20": "^20.1.4",
+    "@types/aws-lambda": "^8.10.145",
+    "@types/node": "^20.14.10",
     "drizzle-kit": "^0.24.0"
   }
 }

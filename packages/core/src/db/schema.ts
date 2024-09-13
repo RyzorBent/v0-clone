@@ -2,7 +2,7 @@
 // https://orm.drizzle.team/docs/sql-schema-declaration
 
 import {
-  integer,
+  pgEnum,
   pgTableCreator,
   text,
   timestamp,
@@ -18,33 +18,10 @@ import { relations } from "drizzle-orm/relations";
  */
 export const createTable = pgTableCreator((name) => `project-4-v0_${name}`);
 
-export const User = createTable("user", {
-  id: varchar("id", { length: 255 }).primaryKey(),
-  githubId: integer("github_id").unique(),
-  username: varchar("username", { length: 255 }),
-  image: text("image"),
-  createdAt: timestamp("created_at", { mode: "date" }).notNull().defaultNow(),
-});
-
-export type User = typeof User.$inferSelect;
-
-export const Session = createTable("session", {
-  id: varchar("id", { length: 255 }).primaryKey(),
-  userId: varchar("user_id", { length: 255 })
-    .references(() => User.id)
-    .notNull(),
-  createdAt: timestamp("created_at", { mode: "date" }).notNull().defaultNow(),
-  expiresAt: timestamp("expires_at", { mode: "date" }).notNull(),
-});
-
-export type Session = typeof Session.$inferSelect;
-
 export const Chat = createTable("chat", {
   id: varchar("id", { length: 255 }).primaryKey(),
   title: varchar("title", { length: 255 }),
-  userId: varchar("user_id", { length: 255 })
-    .references(() => User.id)
-    .notNull(),
+  userId: varchar("user_id", { length: 255 }).notNull(),
   createdAt: timestamp("created_at", { mode: "date" }).notNull().defaultNow(),
 });
 
@@ -54,12 +31,15 @@ export const chatRelations = relations(Chat, ({ many }) => ({
   messages: many(Message),
 }));
 
+export const MessageRole = pgEnum("message_role", ["user", "assistant"]);
+
 export const Message = createTable("message", {
   id: varchar("id", { length: 255 }).primaryKey(),
-  chatId: varchar("chat_id", { length: 255 })
-    .references(() => Chat.id)
-    .notNull(),
+  role: MessageRole("role").notNull(),
   content: text("content").notNull(),
+  chatId: varchar("chat_id", { length: 255 })
+    .references(() => Chat.id, { onDelete: "cascade" })
+    .notNull(),
   createdAt: timestamp("created_at", { mode: "date" }).notNull().defaultNow(),
 });
 
