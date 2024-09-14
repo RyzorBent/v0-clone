@@ -9,7 +9,6 @@ const iot = new IoTDataPlaneClient();
 
 export namespace RealtimeAPI {
   export async function onTitleChanged(chatId: string, title: string) {
-    console.log("onTitleChanged", chatId, title);
     const topic = `${Resource.App.name}/${Resource.App.stage}/${chatId}`;
 
     await iot.send(
@@ -21,7 +20,6 @@ export namespace RealtimeAPI {
   }
 
   export async function onMessageChanged(message: Message) {
-    console.log("onMessageChanged", message);
     const topic = `${Resource.App.name}/${Resource.App.stage}/${message.chatId}`;
 
     await iot.send(

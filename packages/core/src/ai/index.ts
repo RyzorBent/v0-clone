@@ -123,6 +123,21 @@ export namespace AI {
               message: toolCall,
             };
           }
+          if (toolCalls.length !== value.tool_calls.length) {
+            console.log(
+              "toolCalls.length !== value.tool_calls.length",
+              toolCalls.length,
+              value.tool_calls.length
+            );
+            console.log(
+              JSON.stringify({
+                messages,
+                toolCalls,
+                value,
+              })
+            );
+            throw new Error("toolCalls.length !== value.tool_calls.length");
+          }
           return yield* generateChatCompletion([
             ...messages,
             value,
