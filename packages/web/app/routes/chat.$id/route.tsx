@@ -8,6 +8,7 @@ import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { Hydrate } from "~/lib/hydrate";
 import { useChatConnection, useCurrentChat } from "./hooks";
+import { Messages } from "./messages";
 
 export const loader = async (args: LoaderFunctionArgs) => {
   return await api(args).prefetch((api) =>
@@ -37,9 +38,7 @@ function Chat() {
       <div className="flex flex-col">
         <h1>{chat.title ?? "Untitled"}</h1>
         <div className="flex flex-1 flex-col justify-end">
-          {chat.messages.map((message) => (
-            <div key={message.id}>{message.content}</div>
-          ))}
+          <Messages />
           <MessageInput id={chat.id} />
         </div>
       </div>

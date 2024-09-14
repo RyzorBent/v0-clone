@@ -6,8 +6,20 @@ import {
 } from "@codesandbox/sandpack-react";
 
 import editor from "~/lib/editor.json";
+import { useArtifacts } from "./hooks";
+
+const DEFAULT_CODE = `import { Button } from "~/components/ui/button";
+
+export default function App() {
+  return <Button>Hello World</Button>;
+}`;
 
 export function Editor() {
+  const artifacts = useArtifacts();
+
+  const code = artifacts?.[artifacts.length - 1]?.content ?? DEFAULT_CODE;
+  console.log("artifacts", artifacts);
+
   return (
     <SandpackProvider
       template="vite-react-ts"
@@ -16,14 +28,7 @@ export function Editor() {
         devDependencies: editor.devDependencies,
       }}
       files={{
-        "App.tsx": [
-          `import { Button } from "~/components/ui/button";`,
-          ``,
-          `export default function App() {`,
-          `  return <Button>Hello World</Button>`,
-          `}`,
-          ``,
-        ].join("\n"),
+        "App.tsx": code,
         ...editor.files,
       }}
     >

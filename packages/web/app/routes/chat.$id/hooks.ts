@@ -14,6 +14,95 @@ export const useCurrentChat = () => {
   return useChat(id)!;
 };
 
+export const useArtifacts = () => {
+  const chat = useCurrentChat();
+  return chat.messages
+    .reverse()
+    .filter((message) => message.content?.includes("<Artifact"))
+    .flatMap((message) => extractArtifacts(message.content!).artifacts);
+};
+
+export function extractArtifacts(content?: string) {
+  const artifacts: {
+    title: string;
+    identifier: string;
+    content: string;
+  }[] = [];
+  const regex =
+    /<Artifact\s+title="([^"]+)"\s+identifier="([^"]+)"\s+type="([^"]+)">([\s\S]*?)(?:<\/Artifact>|$)/g;
+
+  const cleanedContent = content?.replace(
+    regex,
+    (_, title, identifier, type, artifactContent) => {
+      artifacts.push({
+        title,
+        identifier,
+        content: artifactContent.trim(),
+      });
+      return `<Artifact title="${title}" identifier="${identifier}" type="${type}" />`;
+    },
+  );
+
+  return {
+    content: cleanedContent,
+    artifacts,
+  };
+}
+
+export function completeReactCode(incompleteCode: string): string {
+  let completedCode = incompleteCode.trim();
+  const openTags: string[] = [];
+  const openBrackets: string[] = [];
+  const openParentheses: string[] = [];
+
+  // Helper function to close all open elements
+  const closeAllOpen = () => {
+    while (openTags.length > 0) {
+      completedCode += `</${openTags.pop()}>`;
+    }
+    completedCode += ")".repeat(openParentheses.length);
+    completedCode += "}".repeat(openBrackets.length);
+    openParentheses.length = 0;
+    openBrackets.length = 0;
+  };
+
+  // Process each character in the code
+  for (let i = 0; i < completedCode.length; i++) {
+    const char = completedCode[i];
+    if (char === "<" && completedCode[i + 1] !== "/") {
+      const tagMatch = completedCode.slice(i).match(/^<(\w+)/);
+      if (tagMatch) {
+        openTags.push(tagMatch[1]);
+      }
+    } else if (char === "<" && completedCode[i + 1] === "/") {
+      openTags.pop();
+    } else if (char === "{") {
+      openBrackets.push("{");
+    } else if (char === "}") {
+      openBrackets.pop();
+    } else if (char === "(") {
+      openParentheses.push("(");
+    } else if (char === ")") {
+      openParentheses.pop();
+    }
+  }
+
+  // Close any remaining open elements
+  closeAllOpen();
+
+  // // Ensure the code is wrapped in a function component if it's not already
+  // if (!completedCode.includes('function') && !completedCode.includes('=>')) {
+  //   completedCode = `function Component() {\n  return (\n    ${completedCode}\n  );\n}\n\nexport default Component;`;
+  // }
+
+  // // Add import statement for React if it's missing
+  // if (!completedCode.includes('import React')) {
+  //   completedCode = `import React from 'react';\n\n${completedCode}`;
+  // }
+
+  return completedCode;
+}
+
 export const useChatConnection = () => {
   const id = useParams().id!;
   const { api, realtime } = useApiConfig();
@@ -29,14 +118,22 @@ export const useChatConnection = () => {
         if (index === -1) {
           return {
             ...chat,
-            messages: [...(chat?.messages ?? []), message],
+            messages: [...(chat?.messages ?? []), message].sort(
+              (a, b) =>
+                new Date(a.createdAt).getTime() -
+                new Date(b.createdAt).getTime(),
+            ),
           };
         } else {
           const messages = [...(chat?.messages ?? [])];
           messages[index] = message;
           return {
             ...chat,
-            messages,
+            messages: messages.sort(
+              (a, b) =>
+                new Date(a.createdAt).getTime() -
+                new Date(b.createdAt).getTime(),
+            ),
           };
         }
       });

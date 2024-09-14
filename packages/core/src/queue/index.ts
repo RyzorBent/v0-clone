@@ -1,6 +1,7 @@
 import { SendMessageCommand, SQSClient } from "@aws-sdk/client-sqs";
 import { Resource } from "sst/resource";
 import { z } from "zod";
+import { MessageSchema } from "../db/schema";
 
 const queue = new SQSClient({});
 
@@ -10,13 +11,7 @@ export namespace QueueAPI {
   });
 
   export const GenerateMessageResponseInput = z.object({
-    message: z.object({
-      id: z.string(),
-      chatId: z.string(),
-      role: z.enum(["user", "assistant"]),
-      content: z.string(),
-      createdAt: z.coerce.date(),
-    }),
+    message: MessageSchema,
   });
 
   type EnqueueInput =

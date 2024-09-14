@@ -1,7 +1,7 @@
 import { asc, eq } from "drizzle-orm";
 import { nanoid } from "nanoid";
 import { db } from "../db";
-import { Message } from "../db/schema";
+import { Message, MessageInsert } from "../db/schema";
 import { QueueAPI } from "../queue";
 import { RealtimeAPI } from "../realtime";
 
@@ -14,12 +14,14 @@ export namespace MessagesAPI {
       .orderBy(asc(Message.createdAt));
   }
 
-  export async function create(input: Omit<Message, "id" | "createdAt">) {
+  export async function create(input: Omit<MessageInsert, "id">) {
     const message: Message = {
       id: nanoid(),
       chatId: input.chatId,
       role: input.role,
-      content: input.content,
+      content: input.content ?? null,
+      toolCallId: input.toolCallId ?? null,
+      toolCalls: input.toolCalls ?? null,
       createdAt: new Date(),
     };
     await Promise.all([
@@ -35,7 +37,7 @@ export namespace MessagesAPI {
     return message;
   }
 
-  export async function update(id: string, input: { content: string }) {
+  export async function update(id: string, input: Partial<Message>) {
     const [message] = await db
       .update(Message)
       .set(input)
