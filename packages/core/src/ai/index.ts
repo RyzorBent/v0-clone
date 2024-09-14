@@ -56,36 +56,41 @@ export namespace AI {
       )
     );
     while (true) {
-      const { value, done } = await completion.next();
-      if (done) {
-        await MessagesAPI.update(responseMessage.id, {
-          content: value.content as string | null,
-          toolCalls: value.tool_calls,
-        });
-        return value;
-      }
-      if (value.type === "content") {
-        responseMessage.content ??= "";
-        responseMessage.content += value.content;
-        await RealtimeAPI.onMessageChanged(responseMessage);
-      } else if (value.type === "message") {
-        if (value.message.role === "assistant") {
+      try {
+        const { value, done } = await completion.next();
+        if (done) {
           await MessagesAPI.update(responseMessage.id, {
-            content: value.message.content as string | null,
-            toolCalls: value.message.tool_calls,
+            content: value.content as string | null,
+            toolCalls: value.tool_calls,
           });
-          responseMessage = await MessagesAPI.create({
-            chatId: chat.id,
-            role: "assistant",
-          });
-        } else if (value.message.role === "tool") {
-          await MessagesAPI.create({
-            chatId: chat.id,
-            role: "tool",
-            content: value.message.content,
-            toolCallId: value.message.tool_call_id,
-          });
+          return value;
         }
+        if (value.type === "content") {
+          responseMessage.content ??= "";
+          responseMessage.content += value.content;
+          await RealtimeAPI.onMessageChanged(responseMessage);
+        } else if (value.type === "message") {
+          if (value.message.role === "assistant") {
+            await MessagesAPI.update(responseMessage.id, {
+              content: value.message.content as string | null,
+              toolCalls: value.message.tool_calls,
+            });
+            responseMessage = await MessagesAPI.create({
+              chatId: chat.id,
+              role: "assistant",
+            });
+          } else if (value.message.role === "tool") {
+            await MessagesAPI.create({
+              chatId: chat.id,
+              role: "tool",
+              content: value.message.content,
+              toolCallId: value.message.tool_call_id,
+            });
+          }
+        }
+      } catch (error) {
+        await MessagesAPI.del(responseMessage.id);
+        throw error;
       }
     }
   }

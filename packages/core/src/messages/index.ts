@@ -45,4 +45,8 @@ export namespace MessagesAPI {
       .returning();
     await RealtimeAPI.onMessageChanged(message);
   }
+
+  export async function del(id: string) {
+    await db.delete(Message).where(eq(Message.id, id));
+  }
 }
