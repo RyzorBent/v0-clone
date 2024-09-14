@@ -180,6 +180,7 @@ export namespace AI {
             "  return <Button>Click me</Button>;",
             "}",
             "</Artifact>",
+            "17. Your code will run in a Vite/React app. Do not include any code that is not supported in this environment.",
           ].join("\n"),
         },
         ...messages,
