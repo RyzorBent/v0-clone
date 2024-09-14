@@ -6,7 +6,10 @@ import React, { useMemo } from "react";
 
 export function Markdown({ children }: { children: string }) {
   return useMemo(() => {
-    return children.split("\n").map((line, index) => {
+    const elements: JSX.Element[] = [];
+    for (let i = 0; i < children.split("\n").length; i++) {
+      const line = children.split("\n")[i].trim();
+      if (!line) continue;
       try {
         const { default: Component } = evaluateSync(line, {
           Fragment: React.Fragment,
@@ -14,11 +17,12 @@ export function Markdown({ children }: { children: string }) {
           jsxs: React.createElement,
           useMDXComponents: () => components,
         });
-        return <Component key={index} />;
+        elements.push(<Component key={i} />);
       } catch (error) {
-        return <React.Fragment key={index} />;
+        continue;
       }
-    });
+    }
+    return elements;
   }, [children]);
 }
 
