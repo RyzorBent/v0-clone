@@ -13,6 +13,10 @@ export const web = new sst.aws.Remix("Web", {
     CLERK_SIGN_UP_URL: "/sign-up",
     CLERK_SIGN_IN_FALLBACK_URL: "/",
     CLERK_SIGN_UP_FALLBACK_URL: "/",
+    VITE_API_URL: api.url,
+    VITE_REALTIME_ENDPOINT: realtime.endpoint,
+    VITE_REALTIME_AUTHORIZER: realtime.authorizer,
+    VITE_REALTIME_NAMESPACE: `${$app.name}/${$app.stage}`,
   },
   domain:
     $app.stage === "production"

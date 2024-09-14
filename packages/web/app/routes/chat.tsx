@@ -1,12 +1,9 @@
 import { UserButton } from "@clerk/remix";
-import { LoaderFunctionArgs, SerializeFrom } from "@remix-run/node";
-import { NavLink, Outlet } from "@remix-run/react";
+import { NavLink, Outlet, useNavigate } from "@remix-run/react";
 import { Ellipsis, Loader2, Trash } from "lucide-react";
 
-import type { schema } from "@project-4/core/db";
+import type { Chat } from "@project-4/core/db";
 
-import { useChats, useCreateChat, useDeleteChat } from "~/api/hooks";
-import { api } from "~/api/server";
 import { Button, buttonVariants } from "~/components/ui/button";
 import {
   DropdownMenu,
@@ -14,40 +11,53 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "~/components/ui/dropdown-menu";
-import { Hydrate } from "~/lib/hydrate";
+import {
+  useCreateChatMutation,
+  useDeleteChatMutation,
+  useListChatsQuery,
+} from "~/lib/api";
+import { useTypedDispatch } from "~/lib/hooks";
+import { chatIdChanged } from "~/lib/state";
 import { cn } from "~/lib/utils";
 
-export const loader = async (args: LoaderFunctionArgs) => {
-  return await api(args).prefetch((api) => api.query("/chats"));
-};
-
-export default function Page() {
-  return (
-    <Hydrate>
-      <Chats />
-    </Hydrate>
-  );
-}
-
-function Chats() {
-  const chats = useChats();
-  const createChat = useCreateChat();
+export default function Chats() {
+  const { data } = useListChatsQuery();
+  const [createChat, { isLoading }] = useCreateChatMutation();
+  const navigate = useNavigate();
+  const dispatch = useTypedDispatch();
 
   return (
     <div className="flex h-screen">
-      <aside className="flex w-64 flex-col justify-between border-r bg-muted p-4">
+      <aside className="flex w-64 flex-shrink-0 flex-col justify-between border-r bg-muted p-4">
         <ul className="flex w-full flex-col items-stretch gap-1">
-          {chats.map((chat) => (
-            <ChatItem key={chat.id} chat={chat} />
+          {data?.map((chat) => (
+            <ChatItem
+              key={chat.id}
+              chat={chat}
+              onDelete={(id) => {
+                const chat = data?.filter((c) => c.id !== id)?.[0];
+                if (chat) {
+                  navigate(`/chat/${chat.id}`);
+                } else {
+                  navigate("/chat");
+                }
+              }}
+            />
           ))}
         </ul>
         <div className="flex flex-row gap-2">
           <Button
             className="w-full"
             type="submit"
-            disabled={createChat.isPending}
+            disabled={isLoading}
             size="sm"
-            onClick={() => createChat.mutate()}
+            onClick={() => {
+              createChat().then((res) => {
+                if (!res.data) return;
+                dispatch(chatIdChanged(res.data.id));
+                navigate(`/chat/${res.data.id}`);
+              });
+            }}
           >
             New Chat
           </Button>
@@ -59,8 +69,15 @@ function Chats() {
   );
 }
 
-function ChatItem({ chat }: { chat: SerializeFrom<schema.Chat> }) {
-  const deleteChat = useDeleteChat();
+function ChatItem({
+  chat,
+  onDelete,
+}: {
+  chat: Chat;
+  onDelete: (id: string) => void;
+}) {
+  const [deleteChat, { isLoading }] = useDeleteChatMutation();
+  const dispatch = useTypedDispatch();
 
   return (
     <NavLink
@@ -73,8 +90,11 @@ function ChatItem({ chat }: { chat: SerializeFrom<schema.Chat> }) {
         )
       }
       to={`/chat/${chat.id}`}
+      onClick={() => {
+        dispatch(chatIdChanged(chat.id));
+      }}
     >
-      {({ isPending, isTransitioning }) => (
+      {({ isActive, isPending, isTransitioning }) => (
         <>
           <span className="max-w-full truncate">
             {chat.title ?? "Untitled"}
@@ -94,9 +114,12 @@ function ChatItem({ chat }: { chat: SerializeFrom<schema.Chat> }) {
                   onClick={(e) => {
                     e.preventDefault();
                     e.stopPropagation();
-                    deleteChat.mutate(chat.id);
+                    deleteChat(chat.id);
+                    if (isActive) {
+                      onDelete(chat.id);
+                    }
                   }}
-                  disabled={deleteChat.isPending}
+                  disabled={isLoading}
                 >
                   <Trash className="mr-1.5 size-4" />
                   Delete

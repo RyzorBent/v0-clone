@@ -1,75 +1,61 @@
-import type { LoaderFunctionArgs } from "@remix-run/node";
-import { ErrorResponse, useRouteError } from "@remix-run/react";
-import { lazy, Suspense, useState } from "react";
+import { ErrorResponse, useParams, useRouteError } from "@remix-run/react";
+import { lazy, useEffect, useState } from "react";
 
-import { useSendMessage } from "~/api/hooks";
-import { api } from "~/api/server";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
-import { Hydrate } from "~/lib/hydrate";
-import { useChatConnection, useCurrentChat } from "./hooks";
+import { useCreateMessageMutation, useGetChatQuery } from "~/lib/api";
+import { useTypedDispatch } from "~/lib/hooks";
+import { chatIdChanged } from "~/lib/state";
 import { Messages } from "./messages";
-
-export const loader = async (args: LoaderFunctionArgs) => {
-  return await api(args).prefetch((api) =>
-    api.query("/chats/:id", { params: { id: args.params.id! } }),
-  );
-};
 
 const Editor = lazy(() =>
   import("./editor").then((mod) => ({ default: mod.Editor })),
 );
 
-export default function Page() {
-  return (
-    <Hydrate>
-      <Chat />
-    </Hydrate>
-  );
-}
+export default function Chat() {
+  const params = useParams() as { id: string };
+  const { data: chat } = useGetChatQuery(params.id);
+  const dispatch = useTypedDispatch();
 
-function Chat() {
-  const chat = useCurrentChat();
-
-  useChatConnection();
+  useEffect(() => {
+    dispatch(chatIdChanged(params.id));
+  }, [dispatch, params.id]);
 
   return (
     <main className="grid h-screen grid-cols-2 bg-muted/25">
       <div className="flex flex-col">
-        <h1>{chat.title ?? "Untitled"}</h1>
+        <h1>{chat?.title ?? "Untitled"}</h1>
         <div className="flex flex-1 flex-col justify-end">
           <Messages />
-          <MessageInput id={chat.id} />
+          <MessageInput chatId={params.id} />
         </div>
       </div>
       <div className="flex flex-col">
-        <Suspense>
-          <Editor />
-        </Suspense>
+        <Editor />
       </div>
     </main>
   );
 }
 
-function MessageInput({ id }: { id: string }) {
-  const [message, setMessage] = useState("");
-  const sendMessage = useSendMessage();
+function MessageInput({ chatId }: { chatId: string }) {
+  const [content, setContent] = useState("");
+  const [createMessage, { isLoading }] = useCreateMessageMutation();
 
   return (
     <form
       className="flex flex-row gap-2 p-2"
       onSubmit={(e) => {
         e.preventDefault();
-        sendMessage.mutate({ id, content: message });
-        setMessage("");
+        createMessage({ chatId, content: content });
+        setContent("");
       }}
     >
       <Input
         type="text"
-        value={message}
-        onChange={(e) => setMessage(e.target.value)}
+        value={content}
+        onChange={(e) => setContent(e.target.value)}
       />
-      <Button type="submit" disabled={sendMessage.isPending}>
+      <Button type="submit" disabled={isLoading}>
         Send
       </Button>
     </form>

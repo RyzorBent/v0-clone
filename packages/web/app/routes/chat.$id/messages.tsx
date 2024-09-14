@@ -1,20 +1,13 @@
-import type { SerializeFrom } from "@remix-run/node";
-
-import type { schema } from "@project-4/core/db";
-
-import { extractArtifacts, useCurrentChat } from "./hooks";
+import { useMessage, useMessageIndices } from "./hooks";
 
 export function Messages() {
-  const { messages } = useCurrentChat();
-  return messages.map((message) => (
-    <Message key={message.id} message={message} />
-  ));
+  const { indices } = useMessageIndices();
+
+  return indices.map((index) => <MessageItem key={index} index={index} />);
 }
 
-function Message({ message }: { message: SerializeFrom<schema.Message> }) {
-  if (message.role === "tool") return null;
-  if (!message.content && message.toolCalls) {
-    return <div>Generating...</div>;
-  }
-  return <div>{extractArtifacts(message.content!).content}</div>;
+function MessageItem({ index }: { index: number }) {
+  const { message } = useMessage(index);
+  if (!message) return null;
+  return <div>{message.content}</div>;
 }

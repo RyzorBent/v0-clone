@@ -7,27 +7,21 @@ import {
   Outlet,
   Scripts,
   ScrollRestoration,
+  useLoaderData,
 } from "@remix-run/react";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useRef } from "react";
-import { Resource } from "sst";
+import { Provider } from "react-redux";
 
 import { Toaster } from "~/components/ui/sonner";
+import { tokenChanged } from "./lib/state";
+import { store } from "./lib/store";
 
 import "./tailwind.css";
 
 export const loader = async (args: LoaderFunctionArgs) => {
   return await rootAuthLoader(args, async ({ request }) => {
     return {
-      api: {
-        url: Resource.API.url,
-        token: await request.auth.getToken({ template: "lambda" }),
-      },
-      realtime: {
-        endpoint: Resource.Realtime.endpoint,
-        authorizer: Resource.Realtime.authorizer,
-        namespace: `${Resource.App.name}/${Resource.App.stage}`,
-      },
+      token: await request.auth.getToken({ template: "lambda" }),
     };
   });
 };
@@ -65,14 +59,16 @@ export function Layout({ children }: { children: React.ReactNode }) {
 }
 
 export default ClerkApp(function App() {
-  const queryClientRef = useRef<QueryClient | null>(null);
-  if (!queryClientRef.current) {
-    queryClientRef.current = new QueryClient();
+  const { token } = useLoaderData<typeof loader>();
+  const ref = useRef<boolean>(false);
+  if (token && !ref.current) {
+    store.dispatch(tokenChanged(token));
+    ref.current = true;
   }
 
   return (
-    <QueryClientProvider client={queryClientRef.current}>
+    <Provider store={store}>
       <Outlet />
-    </QueryClientProvider>
+    </Provider>
   );
 });
