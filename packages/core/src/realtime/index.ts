@@ -2,7 +2,7 @@ import {
   IoTDataPlaneClient,
   PublishCommand,
 } from "@aws-sdk/client-iot-data-plane";
-import { Message } from "../db/schema";
+import { Message } from "../messages/message.sql";
 import { Resource } from "sst";
 
 const iot = new IoTDataPlaneClient();

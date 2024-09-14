@@ -2,10 +2,10 @@ import type { Config } from "drizzle-kit";
 import { Resource } from "sst";
 
 export default {
-  schema: "./src/db/schema.ts",
   dialect: "postgresql",
   dbCredentials: {
     url: Resource.DATABASE_URL.value,
   },
+  schema: "./src/**/*.sql.ts",
   tablesFilter: ["project-4-v0_*"],
 } satisfies Config;

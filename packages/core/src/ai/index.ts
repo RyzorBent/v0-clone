@@ -3,7 +3,7 @@ import { zodFunction } from "openai/helpers/zod";
 import { Resource } from "sst";
 import { z } from "zod";
 import { ChatAPI } from "../chat";
-import { Chat, Message } from "../db/schema";
+import { Chat, Message } from "../db/create-table";
 import { MessagesAPI } from "../messages";
 import { RealtimeAPI } from "../realtime";
 import context from "./knowledge-base.json";

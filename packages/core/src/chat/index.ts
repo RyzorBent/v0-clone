@@ -1,8 +1,8 @@
 import { and, eq } from "drizzle-orm";
 import { nanoid } from "nanoid";
 import { z } from "zod";
-import { db, InsertModel } from "../db";
-import { Chat } from "../db/schema";
+import { db } from "../db";
+import { Chat, ChatInsert } from "./chat.sql";
 
 export namespace ChatAPI {
   export const UpdateInput = z.object({
@@ -28,7 +28,7 @@ export namespace ChatAPI {
   }
 
   export async function create(userId: string) {
-    const chat: InsertModel["Chat"] = {
+    const chat: ChatInsert = {
       id: nanoid(),
       userId,
     };

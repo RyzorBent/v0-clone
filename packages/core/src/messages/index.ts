@@ -1,9 +1,9 @@
 import { asc, eq } from "drizzle-orm";
 import { nanoid } from "nanoid";
 import { db } from "../db";
-import { Message, MessageInsert } from "../db/schema";
 import { QueueAPI } from "../queue";
 import { RealtimeAPI } from "../realtime";
+import { Message, MessageInsert } from "./message.sql";
 
 export namespace MessagesAPI {
   export async function list(chatId: string) {

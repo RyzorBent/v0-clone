@@ -1,7 +1,7 @@
 import { SendMessageCommand, SQSClient } from "@aws-sdk/client-sqs";
 import { Resource } from "sst/resource";
 import { z } from "zod";
-import { MessageSchema } from "../db/schema";
+import { MessageSchema } from "../messages/message.sql";
 
 const queue = new SQSClient({});
 
