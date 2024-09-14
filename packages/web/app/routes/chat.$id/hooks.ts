@@ -8,6 +8,7 @@ interface Artifact {
   title: string;
   identifier: string;
   content: string;
+  isComplete: boolean;
 }
 
 export const useChatId = () => {
@@ -65,15 +66,16 @@ const normalizeMessage = (message?: Message) => {
 
   const artifacts: Artifact[] = [];
   const regex =
-    /<Artifact\s+title="([^"]+)"\s+identifier="([^"]+)"\s+type="([^"]+)">([\s\S]*?)(?:<\/Artifact>|$)/g;
+    /<Artifact\s+title="([^"]+)"\s+identifier="([^"]+)"\s+type="([^"]+)">([\s\S]*?)(<\/Artifact>|$)/g;
 
   const normalizedContent = message.content.replace(
     regex,
-    (_, title, identifier, type, artifactContent) => {
+    (_, title, identifier, type, artifactContent, closingTag) => {
       artifacts.push({
         title,
         identifier,
         content: artifactContent.trim(),
+        isComplete: !!closingTag,
       });
       return `<Artifact title="${title}" identifier="${identifier}" type="${type}" />`;
     },
