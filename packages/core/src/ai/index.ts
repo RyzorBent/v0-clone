@@ -3,8 +3,9 @@ import { zodFunction } from "openai/helpers/zod";
 import { Resource } from "sst";
 import { z } from "zod";
 import { ChatAPI } from "../chat";
-import { Chat, Message } from "../db/create-table";
+import { Chat } from "../chat/chat.sql";
 import { MessagesAPI } from "../messages";
+import { Message } from "../messages/message.sql";
 import { RealtimeAPI } from "../realtime";
 import context from "./knowledge-base.json";
 
