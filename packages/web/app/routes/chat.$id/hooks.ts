@@ -15,12 +15,12 @@ export const useChatId = () => {
   return id;
 };
 
-export const useMessageIndices = () => {
+export const useReversedMessageIndices = () => {
   const chatId = useChatId();
   return useListMessagesQuery(chatId, {
     selectFromResult: ({ data }) => {
       return {
-        indices: data?.map((_, index) => index) ?? [],
+        indices: (data?.map((_, index) => index) ?? []).reverse(),
       };
     },
   });
@@ -38,7 +38,7 @@ export const useMessage = (messageIndex: number) => {
   });
 };
 
-export const useArtifactCode = () => {
+export const useArtifact = () => {
   const chatId = useChatId();
 
   return useListMessagesQuery(chatId, {
@@ -48,7 +48,7 @@ export const useArtifactCode = () => {
         const message = normalizeMessage(data[i]);
         if (message && "artifacts" in message && message.artifacts.length > 0) {
           return {
-            code: message.artifacts[message.artifacts.length - 1].content,
+            artifact: message.artifacts[message.artifacts.length - 1] ?? null,
             isSuccess,
           };
         }

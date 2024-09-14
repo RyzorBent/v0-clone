@@ -1,84 +1,36 @@
-import {
-  SandpackCodeEditor,
-  SandpackLayout,
-  SandpackPreview,
-  SandpackProvider,
-  useSandpack,
-} from "@codesandbox/sandpack-react";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { lazy, Suspense } from "react";
 
-import editor from "~/lib/editor.json";
-import { useArtifactCode, useChatId } from "./hooks";
+import { Code } from "~/components/code";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
+import { useArtifact, useChatId } from "./hooks";
 
-const DEFAULT_CODE = `import { Button } from "~/components/ui/button";
-
-export default function App() {
-  return <Button>Hello World</Button>;
-}`;
+const Sandpack = lazy(() => import("~/components/sandpack"));
 
 export function Editor() {
   const id = useChatId();
-  const { code, isSuccess } = useInitialArtifactCode();
-
-  if (!isSuccess) return null;
+  const { artifact } = useArtifact();
 
   return (
-    <SandpackProvider
-      id={id}
-      template="vite-react-ts"
-      customSetup={{
-        dependencies: editor.dependencies,
-        devDependencies: editor.devDependencies,
-      }}
-      files={{
-        "App.tsx": code ?? DEFAULT_CODE,
-        ...editor.files,
-      }}
+    <Tabs
+      className="flex h-screen w-full flex-col bg-muted"
+      defaultValue="code"
     >
-      <SandpackLayout className="flex h-screen flex-col">
-        <ArtifactCodeHandler />
-        <SandpackPreview />
-        <SandpackCodeEditor />
-      </SandpackLayout>
-    </SandpackProvider>
+      <TabsList>
+        <TabsTrigger value="preview">Preview</TabsTrigger>
+        <TabsTrigger value="code">Code</TabsTrigger>
+      </TabsList>
+      <TabsContent className="relative flex-1" value="preview">
+        {artifact ? (
+          <Suspense fallback={<div>Loading...</div>}>
+            <Sandpack key={id} code={artifact.content} />
+          </Suspense>
+        ) : (
+          <div>No artifact found</div>
+        )}
+      </TabsContent>
+      <TabsContent className="h-full overflow-scroll" value="code">
+        <Code>{artifact?.content}</Code>
+      </TabsContent>
+    </Tabs>
   );
-}
-
-const useInitialArtifactCode = () => {
-  const { code, isSuccess } = useArtifactCode();
-  const [initialArtifact, setInitialArtifact] = useState(code);
-
-  useEffect(() => {
-    if (!isSuccess) {
-      setInitialArtifact(null);
-    } else if (code && !initialArtifact) {
-      setInitialArtifact(code);
-    }
-  }, [code, initialArtifact, isSuccess]);
-
-  return useMemo(
-    () => ({
-      code: initialArtifact,
-      isSuccess,
-    }),
-    [initialArtifact, isSuccess],
-  );
-};
-
-function ArtifactCodeHandler() {
-  const { code } = useArtifactCode();
-  const { sandpack } = useSandpack();
-
-  const currentCodeRef = useRef(code);
-  const sandpackRef = useRef(sandpack);
-
-  useEffect(() => {
-    const newCode = code ?? DEFAULT_CODE;
-    if (newCode !== currentCodeRef.current) {
-      sandpackRef.current.updateFile("App.tsx", newCode, true);
-      currentCodeRef.current = newCode;
-    }
-  }, [code]);
-
-  return null;
 }

@@ -1,20 +1,16 @@
 import { ErrorResponse, useParams, useRouteError } from "@remix-run/react";
-import { lazy, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
-import { useCreateMessageMutation, useGetChatQuery } from "~/lib/api";
+import { useCreateMessageMutation } from "~/lib/api";
 import { useTypedDispatch } from "~/lib/hooks";
 import { chatIdChanged } from "~/lib/state";
+import { Editor } from "./editor";
 import { Messages } from "./messages";
-
-const Editor = lazy(() =>
-  import("./editor").then((mod) => ({ default: mod.Editor })),
-);
 
 export default function Chat() {
   const params = useParams() as { id: string };
-  const { data: chat } = useGetChatQuery(params.id);
   const dispatch = useTypedDispatch();
 
   useEffect(() => {
@@ -22,17 +18,12 @@ export default function Chat() {
   }, [dispatch, params.id]);
 
   return (
-    <main className="grid h-screen grid-cols-2 bg-muted/25">
-      <div className="flex flex-col">
-        <h1>{chat?.title ?? "Untitled"}</h1>
-        <div className="flex flex-1 flex-col justify-end">
-          <Messages />
-          <MessageInput chatId={params.id} />
-        </div>
+    <main className="grid h-screen flex-1 grid-cols-2 divide-x bg-muted/25">
+      <div className="flex h-screen flex-col divide-y">
+        <Messages />
+        <MessageInput chatId={params.id} />
       </div>
-      <div className="flex flex-col">
-        <Editor />
-      </div>
+      <Editor />
     </main>
   );
 }
