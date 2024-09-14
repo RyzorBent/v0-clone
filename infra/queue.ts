@@ -1,5 +1,5 @@
 import { realtime } from "./realtime";
-import { db, openai, pinecone } from "./secrets";
+import { db, openai } from "./secrets";
 
 export const generateChatTitleQueue = new sst.aws.Queue(
   "GenerateChatTitleQueue"
@@ -21,7 +21,7 @@ export const generateMessageResponseQueue = new sst.aws.Queue(
 generateMessageResponseQueue.subscribe({
   handler:
     "packages/functions/src/subscribers/generate-message-response.handler",
-  link: [db, openai, realtime, generateChatTitleQueue, pinecone],
+  link: [db, openai, realtime, generateChatTitleQueue],
   permissions: [
     {
       actions: ["iot:*"],

@@ -5,4 +5,3 @@ export const clerk = {
 };
 export const db = new sst.Secret("DATABASE_URL");
 export const openai = new sst.Secret("OPENAI_API_KEY");
-export const pinecone = new sst.Secret("PINECONE_API_KEY");
