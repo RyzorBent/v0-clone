@@ -13,5 +13,5 @@ const docs = await Promise.all(
 
 await writeFile(
   "../core/src/ai/knowledge-base.json",
-  JSON.stringify(Object.fromEntries(docs), null, 2)
+  JSON.stringify(Object.fromEntries(docs), null, 2) + "\n"
 );
