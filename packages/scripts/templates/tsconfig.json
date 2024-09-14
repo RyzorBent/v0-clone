@@ -20,10 +20,5 @@
       "~/*": ["./src/*"]
     }
   },
-  "include": ["App.tsx", "src"],
-  "references": [
-    {
-      "path": "./tsconfig.node.json"
-    }
-  ]
+  "include": ["App.tsx", "src"]
 }
