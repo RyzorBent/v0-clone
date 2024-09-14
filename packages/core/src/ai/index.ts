@@ -20,9 +20,9 @@ export namespace AI {
       messages: [
         {
           role: "system",
-          content: `Based on the following messages, return a brief title for the chat. Do not include any content in your response besides the title.
-          
-          Here are the messages:
+          content: `Generate a concise title for this chat, focusing on the main topic or specific code components being discussed or generated. The title should be as short as possible while still being descriptive. If code is being generated, prioritize mentioning the type of component or functionality. Only return the title itself, with no additional text.
+
+          Chat messages:
           ${messages.map((message) => `${message.role}: ${message.content}`).join("\n")}`,
         },
       ],
@@ -170,7 +170,8 @@ export namespace AI {
             "13. Wrap the generated code in <Artifact> tags.",
             "14. Include a title, identifier, and type in the opening <Artifact> tag.",
             "15. To update the code, recreate the artifact using the same identifier.",
-            "16. Do not include backticks (`) or any other code block indicators around the code inside the Artifact tags.",
+            "16. Do not include backticks, triple backticks, or any other code block indicators around the code inside the Artifact tags. The code should be directly inside the Artifact tags without any additional formatting.",
+            "17. Ensure that the Artifact tags are on separate lines from the code content.",
             "Example:",
             '<Artifact title="Button Component" identifier="button-component" type="tsx">',
             "import React from 'react';",
@@ -180,7 +181,6 @@ export namespace AI {
             "  return <Button>Click me</Button>;",
             "}",
             "</Artifact>",
-            "17. Your code will run in a Vite/React app. Do not include any code that is not supported in this environment.",
           ].join("\n"),
         },
         ...messages,
