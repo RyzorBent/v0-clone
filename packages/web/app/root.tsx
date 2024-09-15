@@ -69,6 +69,7 @@ export default ClerkApp(function App() {
   return (
     <Provider store={store}>
       <Outlet />
+      <Toaster />
     </Provider>
   );
 });
