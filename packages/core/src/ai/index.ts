@@ -96,9 +96,7 @@ export namespace AI {
           }
         }
       } catch (error) {
-        if (responseMessage) {
-          await MessagesAPI.del(responseMessage.id);
-        }
+        await MessagesAPI.del(responseMessage.id);
         throw error;
       }
     }
