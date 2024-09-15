@@ -65,31 +65,40 @@ export namespace AI {
           });
           return value;
         }
-        if (value.type === "content") {
-          responseMessage.content ??= "";
-          responseMessage.content += value.content;
-          await RealtimeAPI.onMessageChanged(responseMessage);
-        } else if (value.type === "message") {
-          if (value.message.role === "assistant") {
-            await MessagesAPI.update(responseMessage.id, {
-              content: value.message.content as string | null,
-              toolCalls: value.message.tool_calls,
-            });
-            responseMessage = await MessagesAPI.create({
-              chatId: chat.id,
-              role: "assistant",
-            });
-          } else if (value.message.role === "tool") {
-            await MessagesAPI.create({
-              chatId: chat.id,
-              role: "tool",
-              content: value.message.content,
-              toolCallId: value.message.tool_call_id,
-            });
+        switch (value.type) {
+          case "content": {
+            responseMessage.content ??= "";
+            responseMessage.content += value.content;
+            await RealtimeAPI.onMessageChanged(responseMessage);
+            break;
+          }
+          case "messages": {
+            for (const message of value.messages) {
+              if (message.role === "assistant") {
+                await MessagesAPI.update(responseMessage.id, {
+                  content: message.content as string | null,
+                  toolCalls: message.tool_calls,
+                });
+                responseMessage = await MessagesAPI.create({
+                  chatId: chat.id,
+                  role: "assistant",
+                });
+              } else {
+                await MessagesAPI.create({
+                  chatId: chat.id,
+                  role: message.role,
+                  content: message.content,
+                  toolCallId: message.tool_call_id,
+                });
+              }
+            }
+            break;
           }
         }
       } catch (error) {
-        await MessagesAPI.del(responseMessage.id);
+        if (responseMessage) {
+          await MessagesAPI.del(responseMessage.id);
+        }
         throw error;
       }
     }
@@ -103,10 +112,6 @@ export namespace AI {
       const { value, done } = await response.next();
       if (done) {
         if (value.tool_calls) {
-          yield {
-            type: "message" as const,
-            message: value,
-          };
           const toolCalls = value.tool_calls.map((tool_call) => {
             const args = JSON.parse(tool_call.function.arguments) as {
               components: (keyof typeof context)[];
@@ -117,27 +122,10 @@ export namespace AI {
               content: JSON.stringify(handleGetComponentInfo(args)),
             } satisfies OpenAI.Chat.Completions.ChatCompletionToolMessageParam;
           });
-          for (const toolCall of toolCalls) {
-            yield {
-              type: "message" as const,
-              message: toolCall,
-            };
-          }
-          if (toolCalls.length !== value.tool_calls.length) {
-            console.log(
-              "toolCalls.length !== value.tool_calls.length",
-              toolCalls.length,
-              value.tool_calls.length
-            );
-            console.log(
-              JSON.stringify({
-                messages,
-                toolCalls,
-                value,
-              })
-            );
-            throw new Error("toolCalls.length !== value.tool_calls.length");
-          }
+          yield {
+            type: "messages" as const,
+            messages: [value, ...toolCalls],
+          };
           return yield* generateChatCompletion([
             ...messages,
             value,
@@ -148,17 +136,6 @@ export namespace AI {
       }
       yield value;
     }
-  }
-
-  function handleGetComponentInfo(input: { components: string[] }) {
-    return (input.components as (keyof typeof context)[]).map(
-      (component) =>
-        context[component] as {
-          title: string;
-          description: string;
-          documentation: string;
-        }
-    );
   }
 
   async function* generateChatCompletion(
@@ -213,7 +190,6 @@ export namespace AI {
           parameters: z.object({
             components: z.array(z.string()),
           }),
-          function: handleGetComponentInfo,
         }),
       ],
       stream: true,
@@ -260,37 +236,16 @@ export namespace AI {
     return response;
   }
 
-  export function extractArtifacts(content: string): {
-    content: string;
-    artifacts: Array<{
-      title: string;
-      identifier: string;
-      content: string;
-    }>;
-  } {
-    const artifacts: Array<{
-      title: string;
-      identifier: string;
-      content: string;
-    }> = [];
-    const regex =
-      /<Artifact\s+title="([^"]+)"\s+identifier="([^"]+)">([\s\S]*?)(?:<\/Artifact>|$)/g;
-
-    const cleanedContent = content.replace(
-      regex,
-      (match, title, identifier, artifactContent) => {
-        artifacts.push({
-          title,
-          identifier,
-          content: artifactContent.trim(),
-        });
-        return `<Artifact title="${title}" identifier="${identifier}" />`;
+  function handleGetComponentInfo(input: { components: string[] }) {
+    return input.components.map((component) => {
+      if (component in context) {
+        return context[component as keyof typeof context];
       }
-    );
-
-    return {
-      content: cleanedContent,
-      artifacts,
-    };
+      return {
+        title: component,
+        description:
+          "This is not a valid component. Do not attempt to use this component.",
+      };
+    });
   }
 }
