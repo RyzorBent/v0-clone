@@ -14,13 +14,15 @@ export const handler = async (event: SQSEvent) => {
   if (!chat.messages.some((message) => message.id === message.id)) {
     chat.messages.push(message);
   }
-  await AI.generateMessageResponse(chat);
-  if (!chat.title) {
-    await QueueAPI.enqueue({
-      type: "GenerateChatTitleQueue",
-      body: { chatId: chat.id },
-    });
-  }
+  await Promise.all([
+    AI.generateMessageResponse(chat),
+    chat.title
+      ? Promise.resolve()
+      : QueueAPI.enqueue({
+          type: "GenerateChatTitleQueue",
+          body: { chatId: chat.id },
+        }),
+  ]);
   return {
     statusCode: 200,
     body: "Success",
