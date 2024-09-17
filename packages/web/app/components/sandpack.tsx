@@ -13,7 +13,7 @@ const DEFAULT_CODE = `export default function App() {
 
 interface SandpackProps {
   code: string | null;
-  onStatusChange?: (status: string) => void;
+  onStatusChange?: (status: "done") => void;
 }
 
 export default function Sandpack({ code, onStatusChange }: SandpackProps) {
@@ -63,7 +63,10 @@ function SandpackAPIHandler({ code, onStatusChange }: SandpackProps) {
   useEffect(() => {
     if (onStatusChange) {
       return listen((msg) => {
-        onStatusChange(JSON.stringify(msg));
+        console.log(JSON.stringify(msg));
+        if (msg.type === "done") {
+          onStatusChange("done");
+        }
       });
     }
   }, [listen, onStatusChange]);

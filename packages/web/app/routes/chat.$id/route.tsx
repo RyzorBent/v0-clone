@@ -23,7 +23,7 @@ export default function Chat() {
         <Messages />
         <MessageInput chatId={params.id} />
       </div>
-      <Editor />
+      <Editor key={params.id} />
     </main>
   );
 }
