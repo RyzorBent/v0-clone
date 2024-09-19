@@ -44,7 +44,7 @@ const authorizer = api.addAuthorizer({
   name: "clerk",
   jwt: {
     issuer: clerk.issuer.value,
-    audiences: ["project-4-v0"],
+    audiences: ["headstarter-projects-lambda"],
   },
 });
 
