@@ -46,10 +46,6 @@ module.exports = {
         ],
       },
       rules: {
-        "react/jsx-no-leaked-render": [
-          "warn",
-          { validStrategies: ["ternary"] },
-        ],
         "react/prop-types": "off",
       },
     },

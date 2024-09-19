@@ -1,5 +1,5 @@
 import { createListenerMiddleware, ListenerEffectAPI } from "@reduxjs/toolkit";
-import { iot, mqtt } from "aws-iot-device-sdk-v2";
+import mqtt from "mqtt";
 
 import { Message } from "@project-4/core/db";
 
@@ -30,8 +30,7 @@ if (typeof window !== "undefined") {
 }
 
 class RealTimeClient {
-  private connection: mqtt.MqttClientConnection;
-  private decoder = new TextDecoder("utf8");
+  private connection: mqtt.MqttClient;
 
   constructor(
     token: string,
@@ -44,11 +43,14 @@ class RealTimeClient {
     this.connection.on("disconnect", () => {
       console.log("[RealTimeClient] disconnected");
     });
+    this.connection.on("end", () => {
+      console.log("[RealTimeClient] end");
+    });
     this.connection.on("message", (topic, rawData) => {
       const chatId = topic.split("/").pop();
       if (!chatId) return;
 
-      const body = JSON.parse(this.decoder.decode(new Uint8Array(rawData))) as
+      const body = JSON.parse(rawData.toString()) as
         | { type: "title"; title: string }
         | { type: "message"; message: Message };
 
@@ -64,32 +66,26 @@ class RealTimeClient {
   }
 
   private createConnection(token: string) {
-    const client = new mqtt.MqttClient();
-    const id = window.crypto.randomUUID();
-    return client.new_connection(
-      iot.AwsIotMqttConnectionConfigBuilder.new_with_websockets()
-        .with_clean_session(true)
-        .with_client_id(id)
-        .with_endpoint(import.meta.env.VITE_REALTIME_ENDPOINT)
-        .with_custom_authorizer(
-          "",
-          import.meta.env.VITE_REALTIME_AUTHORIZER,
-          "",
-          token,
-        )
-        .build(),
+    return mqtt.connect(
+      `wss://${import.meta.env.VITE_REALTIME_ENDPOINT}/mqtt?x-amz-customauthorizer-name=${import.meta.env.VITE_REALTIME_AUTHORIZER}`,
+      {
+        protocolVersion: 5,
+        manualConnect: typeof window === "undefined", // disable auto-connect during SSR
+        username: "", // workaround for sst authorizer bug
+        password: token,
+        clientId: `client_${crypto.randomUUID()}`,
+      },
     );
   }
 
   async run() {
     try {
       this.listenerAPI.cancelActiveListeners();
-      await this.connection.connect();
       await this.runEventLoop();
     } catch (error) {
       console.error("[RealTimeClient] event loop error", error);
     } finally {
-      await this.connection.disconnect().catch(() => null);
+      this.connection.end();
     }
   }
 
@@ -106,7 +102,7 @@ class RealTimeClient {
       console.log("[RealTimeClient] subscribing to", chatId);
 
       const topic = `${import.meta.env.VITE_REALTIME_NAMESPACE}/${chatId}`;
-      await this.connection.subscribe(topic, mqtt.QoS.AtLeastOnce);
+      this.connection.subscribe(topic, { qos: 1 });
 
       const fork = this.listenerAPI.fork(async () => {
         await this.waitForChatId(chatId);
@@ -115,7 +111,7 @@ class RealTimeClient {
       const result = await fork.result;
 
       console.log("[RealTimeClient] unsubscribing from", chatId);
-      await this.connection.unsubscribe(topic);
+      this.connection.unsubscribe(topic);
 
       if (result.status === "ok") {
         continue;
