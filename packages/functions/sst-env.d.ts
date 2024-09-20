@@ -14,10 +14,6 @@ declare module "sst" {
       "type": "sst.sst.Secret"
       "value": string
     }
-    "ClerkJWKSEndpoint": {
-      "type": "sst.sst.Secret"
-      "value": string
-    }
     "ClerkPublishableKey": {
       "type": "sst.sst.Secret"
       "value": string
