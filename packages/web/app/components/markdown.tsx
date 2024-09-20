@@ -1,7 +1,7 @@
 /* eslint-disable jsx-a11y/anchor-has-content, jsx-a11y/heading-has-content, jsx-a11y/alt-text */
 
 import { evaluateSync } from "@mdx-js/mdx";
-import { Code2 } from "lucide-react";
+import { Code2, Loader2 } from "lucide-react";
 import React, { useMemo } from "react";
 
 export function Markdown({ children }: { children: string }) {
@@ -74,9 +74,13 @@ const components = {
   blockquote: (props: React.HTMLAttributes<HTMLQuoteElement>) => (
     <blockquote className="border-l-2 border-gray-300 pl-4" {...props} />
   ),
-  Artifact: ({ title }: { title: string }) => (
-    <div className="my-2 flex w-fit items-center rounded-md border bg-muted px-3 py-2">
-      <Code2 className="mr-2 size-4" />
+  Artifact: ({ title, isComplete }: { title: string; isComplete: boolean }) => (
+    <div className="my-2 flex w-fit items-center gap-2 rounded-md border bg-muted px-3 py-2">
+      {isComplete ? (
+        <Code2 className="size-4" />
+      ) : (
+        <Loader2 className="size-4 animate-spin" />
+      )}
       <p className="text-sm font-medium">{title}</p>
     </div>
   ),

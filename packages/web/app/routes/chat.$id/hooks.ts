@@ -77,7 +77,7 @@ const normalizeMessage = (message?: Message) => {
         content: artifactContent.trim(),
         isComplete: !!closingTag,
       });
-      return `<Artifact title="${title}" identifier="${identifier}" type="${type}" />`;
+      return `<Artifact title="${title}" identifier="${identifier}" type="${type}" isComplete={${!!closingTag}} />`;
     },
   );
 
