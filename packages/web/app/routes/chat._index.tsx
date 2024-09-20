@@ -24,6 +24,7 @@ export default function ChatWelcome() {
     }
     createMessage({
       chatId: res.data.id,
+      role: "user",
       content: message,
     });
     navigate(`/chat/${res.data.id}`);

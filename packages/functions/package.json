@@ -13,7 +13,10 @@
     "clean": "git clean -xdf node_modules"
   },
   "dependencies": {
+    "@hono/zod-validator": "^0.2.2",
     "@project-4/core": "workspace:*",
+    "hono": "^4.6.2",
+    "jose": "^5.9.2",
     "zod": "catalog:"
   },
   "devDependencies": {

@@ -1,7 +1,10 @@
-export const clerk = {
-  publishableKey: new sst.Secret("CLERK_PUBLISHABLE_KEY"),
-  secretKey: new sst.Secret("CLERK_SECRET_KEY"),
-  issuer: new sst.Secret("CLERK_ISSUER"),
+export const secrets = {
+  ClerkIssuer: new sst.Secret("ClerkIssuer"),
+  ClerkJWKSEndpoint: new sst.Secret("ClerkJWKSEndpoint"),
+  ClerkPublishableKey: new sst.Secret("ClerkPublishableKey"),
+  ClerkSecretKey: new sst.Secret("ClerkSecretKey"),
+  DatabaseURL: new sst.Secret("DatabaseURL"),
+  OpenAIAPIKey: new sst.Secret("OpenAIAPIKey"),
 };
-export const db = new sst.Secret("DATABASE_URL");
-export const openai = new sst.Secret("OPENAI_API_KEY");
+
+export const allSecrets = Object.values(secrets);

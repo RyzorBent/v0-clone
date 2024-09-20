@@ -1,6 +1,6 @@
 import { useParams } from "@remix-run/react";
 
-import type { Message } from "@project-4/core/db";
+import type { Message } from "@project-4/core/types";
 
 import { useListMessagesQuery } from "~/lib/api";
 

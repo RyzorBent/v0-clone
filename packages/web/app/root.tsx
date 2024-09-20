@@ -13,7 +13,7 @@ import { useRef } from "react";
 import { Provider } from "react-redux";
 
 import { Toaster } from "~/components/ui/sonner";
-import { tokenChanged } from "./lib/state";
+import { initialize } from "./lib/state";
 import { store } from "./lib/store";
 
 import "./tailwind.css";
@@ -21,6 +21,7 @@ import "./tailwind.css";
 export const loader = async (args: LoaderFunctionArgs) => {
   return await rootAuthLoader(args, async ({ request }) => {
     return {
+      userId: request.auth.userId,
       token: await request.auth.getToken({ template: "lambda" }),
     };
   });
@@ -59,10 +60,10 @@ export function Layout({ children }: { children: React.ReactNode }) {
 }
 
 export default ClerkApp(function App() {
-  const { token } = useLoaderData<typeof loader>();
+  const { token, userId } = useLoaderData<typeof loader>();
   const ref = useRef<boolean>(false);
-  if (token && !ref.current) {
-    store.dispatch(tokenChanged(token));
+  if (token && userId && !ref.current) {
+    store.dispatch(initialize({ token, userId }));
     ref.current = true;
   }
 

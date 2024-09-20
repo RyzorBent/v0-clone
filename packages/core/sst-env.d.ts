@@ -6,34 +6,35 @@ export {}
 declare module "sst" {
   export interface Resource {
     "API": {
-      "type": "sst.aws.ApiGatewayV2"
+      "name": string
+      "type": "sst.aws.Function"
       "url": string
     }
-    "CLERK_ISSUER": {
+    "ClerkIssuer": {
       "type": "sst.sst.Secret"
       "value": string
     }
-    "CLERK_PUBLISHABLE_KEY": {
+    "ClerkJWKSEndpoint": {
       "type": "sst.sst.Secret"
       "value": string
     }
-    "CLERK_SECRET_KEY": {
+    "ClerkPublishableKey": {
       "type": "sst.sst.Secret"
       "value": string
     }
-    "DATABASE_URL": {
+    "ClerkSecretKey": {
       "type": "sst.sst.Secret"
       "value": string
     }
-    "GenerateChatTitleQueue": {
-      "type": "sst.aws.Queue"
-      "url": string
+    "DatabaseURL": {
+      "type": "sst.sst.Secret"
+      "value": string
     }
     "GenerateMessageResponseQueue": {
       "type": "sst.aws.Queue"
       "url": string
     }
-    "OPENAI_API_KEY": {
+    "OpenAIAPIKey": {
       "type": "sst.sst.Secret"
       "value": string
     }

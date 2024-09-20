@@ -2,16 +2,14 @@ import OpenAI from "openai";
 import { zodFunction } from "openai/helpers/zod";
 import { Resource } from "sst";
 import { z } from "zod";
-import { ChatAPI } from "../chat";
-import { Chat } from "../chat/chat.sql";
-import { MessagesAPI } from "../messages";
-import { Message } from "../messages/message.sql";
-import { RealtimeAPI } from "../realtime";
+import { Chat } from "../chat";
+import { Message } from "../messages";
+import { Realtime } from "../realtime";
 import context from "./knowledge-base.json";
 
 export namespace AI {
   const openai = new OpenAI({
-    apiKey: Resource.OPENAI_API_KEY.value,
+    apiKey: Resource.OpenAIAPIKey.value,
   });
 
   export async function generateChatTitle(chatId: string, messages: Message[]) {
@@ -32,20 +30,17 @@ export namespace AI {
     let title = "";
     for await (const chunk of completion) {
       title += chunk.choices[0].delta.content ?? "";
-      await RealtimeAPI.onTitleChanged(chatId, title);
+      await Realtime.onTitleChanged(chatId, title);
     }
-    await ChatAPI.update(chatId, null, { title });
+    await Chat.patch(chatId, { title });
   }
 
   export async function generateMessageResponse(
-    chat: Chat & { messages: Message[] }
+    chatId: string,
+    messages: Message[]
   ) {
-    let responseMessage = await MessagesAPI.create({
-      chatId: chat.id,
-      role: "assistant",
-    });
     const completion = generateResponseInternal(
-      chat.messages.map(
+      messages.map(
         (message) =>
           ({
             role: message.role,
@@ -55,11 +50,15 @@ export namespace AI {
           }) as OpenAI.Chat.Completions.ChatCompletionMessageParam
       )
     );
+    let responseMessage = await Message.create({
+      chatId,
+      role: "assistant",
+    });
     while (true) {
       try {
         const { value, done } = await completion.next();
         if (done) {
-          await MessagesAPI.update(responseMessage.id, {
+          await Message.patch(responseMessage.id, {
             content: value.content as string | null,
             toolCalls: value.tool_calls,
           });
@@ -69,23 +68,23 @@ export namespace AI {
           case "content": {
             responseMessage.content ??= "";
             responseMessage.content += value.content;
-            await RealtimeAPI.onMessageChanged(responseMessage);
+            await Realtime.onMessageChanged(responseMessage);
             break;
           }
           case "messages": {
             for (const message of value.messages) {
               if (message.role === "assistant") {
-                await MessagesAPI.update(responseMessage.id, {
+                await Message.patch(responseMessage.id, {
                   content: message.content as string | null,
                   toolCalls: message.tool_calls,
                 });
-                responseMessage = await MessagesAPI.create({
-                  chatId: chat.id,
+                responseMessage = await Message.create({
+                  chatId,
                   role: "assistant",
                 });
               } else {
-                await MessagesAPI.create({
-                  chatId: chat.id,
+                await Message.create({
+                  chatId,
                   role: message.role,
                   content: message.content,
                   toolCallId: message.tool_call_id,
@@ -96,7 +95,7 @@ export namespace AI {
           }
         }
       } catch (error) {
-        await MessagesAPI.del(responseMessage.id);
+        await Message.del(responseMessage.id);
         throw error;
       }
     }

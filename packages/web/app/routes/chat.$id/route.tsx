@@ -37,7 +37,7 @@ function MessageInput({ chatId }: { chatId: string }) {
       className="flex flex-row gap-2 p-2"
       onSubmit={(e) => {
         e.preventDefault();
-        createMessage({ chatId, content: content });
+        createMessage({ chatId, role: "user", content: content });
         setContent("");
       }}
     >

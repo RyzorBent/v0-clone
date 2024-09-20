@@ -1,55 +1,50 @@
 import { and, eq } from "drizzle-orm";
-import { nanoid } from "nanoid";
 import { z } from "zod";
+import { Actor } from "../actor";
 import { db } from "../db";
-import { Chat, ChatInsert } from "./chat.sql";
+import { chats } from "./chat.sql";
 
-export namespace ChatAPI {
-  export const UpdateInput = z.object({
+export type Chat = typeof chats.$inferSelect;
+
+export namespace Chat {
+  export const PatchInput = z.object({
     title: z.string().optional(),
   });
 
-  export async function index(userId: string) {
-    const chats = await db.select().from(Chat).where(eq(Chat.userId, userId));
-    return chats;
+  export async function list() {
+    const { userId } = Actor.use();
+    return await db.select().from(chats).where(eq(chats.userId, userId));
   }
 
-  export async function get(chatId: string, userId: string | null = null) {
-    const chat = await db.query.Chat.findFirst({
-      where: and(
-        eq(Chat.id, chatId),
-        userId ? eq(Chat.userId, userId) : undefined
-      ),
-      with: {
-        messages: true,
-      },
+  export async function get(chatId: string) {
+    const { userId } = Actor.use();
+    const chat = await db.query.chats.findFirst({
+      where: and(eq(chats.id, chatId), eq(chats.userId, userId)),
     });
     return chat;
   }
 
-  export async function create(userId: string) {
-    const chat: ChatInsert = {
-      id: nanoid(),
-      userId,
-    };
-    await db.insert(Chat).values(chat);
+  export async function create() {
+    const { userId } = Actor.use();
+    const [chat] = await db.insert(chats).values({ userId }).returning();
     return chat;
   }
 
-  export async function update(
+  export async function patch(
     chatId: string,
-    userId: string | null,
-    input: z.infer<typeof UpdateInput>
+    input: z.infer<typeof PatchInput>
   ) {
+    const { userId } = Actor.use();
     await db
-      .update(Chat)
+      .update(chats)
       .set(input)
-      .where(
-        and(eq(Chat.id, chatId), userId ? eq(Chat.userId, userId) : undefined)
-      );
+      .where(and(eq(chats.id, chatId), eq(chats.userId, userId)));
   }
 
-  export async function del(id: string, userId: string) {
-    await db.delete(Chat).where(and(eq(Chat.id, id), eq(Chat.userId, userId)));
+  export async function del(id: string) {
+    const { userId } = Actor.use();
+    await db
+      .delete(chats)
+      .where(and(eq(chats.id, id), eq(chats.userId, userId)));
   }
 }

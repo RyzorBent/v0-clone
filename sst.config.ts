@@ -31,8 +31,8 @@ export default $config({
     await import("./infra/secrets");
     await import("./infra/realtime");
     await import("./infra/queue");
-    const { web } = await import("./infra/web");
     const { api } = await import("./infra/api");
+    const { web } = await import("./infra/web");
 
     return {
       api: api.url,

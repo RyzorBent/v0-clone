@@ -1,6 +1,6 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
-import type { Chat, Message } from "@project-4/core/db";
+import type { Chat, Message } from "@project-4/core/types";
 
 import { State } from "./store";
 
@@ -46,7 +46,7 @@ export const api = createApi({
       query: (chatId) => `/chats/${chatId}/messages`,
       providesTags: ["Message"],
     }),
-    createMessage: builder.mutation<void, Pick<Message, "chatId" | "content">>({
+    createMessage: builder.mutation<void, Message.Insert>({
       query: (message) => ({
         url: `/chats/${message.chatId}/messages`,
         method: "POST",

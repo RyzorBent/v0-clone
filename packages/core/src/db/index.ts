@@ -1,17 +1,15 @@
 import { neon } from "@neondatabase/serverless";
 import { drizzle } from "drizzle-orm/neon-http";
 import { Resource } from "sst";
-import { Chat, chatRelations } from "../chat/chat.sql";
-import { Message, messageRelations } from "../messages/message.sql";
+import { chats, chatsRelations } from "../chat/chat.sql";
+import { messages, messagesRelations } from "../messages/message.sql";
 
 const schema = {
-  Chat,
-  chatRelations,
-  Message,
-  messageRelations,
+  chats,
+  chatsRelations,
+  messages,
+  messagesRelations,
 };
 
-const client = neon(Resource.DATABASE_URL.value);
+const client = neon(Resource.DatabaseURL.value);
 export const db = drizzle(client, { schema });
-
-export { Chat, Message };

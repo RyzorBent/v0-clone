@@ -4,10 +4,7 @@
   "private": true,
   "type": "module",
   "exports": {
-    "./*": [
-      "./src/*/index.ts",
-      "./src/*.ts"
-    ]
+    "./*": "./src/*.ts"
   },
   "scripts": {
     "clean": "git clean -xdf node_modules",
@@ -17,13 +14,13 @@
     "db:studio": "sst shell drizzle-kit studio"
   },
   "dependencies": {
-    "@aws-sdk/client-iot-data-plane": "^3.650.0",
-    "@aws-sdk/client-sqs": "^3.650.0",
+    "@aws-sdk/client-iot-data-plane": "^3.654.0",
+    "@aws-sdk/client-sqs": "^3.654.0",
     "@neondatabase/serverless": "^0.9.5",
     "drizzle-orm": "^0.33.0",
     "drizzle-zod": "^0.5.1",
     "nanoid": "^5.0.7",
-    "openai": "^4.60.1",
+    "openai": "^4.63.0",
     "sst": "catalog:",
     "zod": "catalog:"
   },

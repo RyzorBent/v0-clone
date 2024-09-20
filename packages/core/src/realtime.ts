@@ -2,14 +2,16 @@ import {
   IoTDataPlaneClient,
   PublishCommand,
 } from "@aws-sdk/client-iot-data-plane";
-import { Message } from "../messages/message.sql";
 import { Resource } from "sst";
+import { Actor } from "./actor";
+import type { Message } from "./types";
 
 const iot = new IoTDataPlaneClient();
 
-export namespace RealtimeAPI {
+export namespace Realtime {
   export async function onTitleChanged(chatId: string, title: string) {
-    const topic = `${Resource.App.name}/${Resource.App.stage}/${chatId}`;
+    const { userId } = Actor.use();
+    const topic = `${Resource.App.name}/${Resource.App.stage}/${userId}/${chatId}`;
 
     await iot.send(
       new PublishCommand({
@@ -20,7 +22,8 @@ export namespace RealtimeAPI {
   }
 
   export async function onMessageChanged(message: Message) {
-    const topic = `${Resource.App.name}/${Resource.App.stage}/${message.chatId}`;
+    const { userId } = Actor.use();
+    const topic = `${Resource.App.name}/${Resource.App.stage}/${userId}/${message.chatId}`;
 
     await iot.send(
       new PublishCommand({

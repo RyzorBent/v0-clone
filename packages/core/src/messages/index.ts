@@ -1,52 +1,74 @@
+import { SendMessageCommand, SQSClient } from "@aws-sdk/client-sqs";
 import { asc, eq } from "drizzle-orm";
-import { nanoid } from "nanoid";
+import { createInsertSchema, createSelectSchema } from "drizzle-zod";
+import { Resource } from "sst";
+import { z } from "zod";
+import { Actor } from "../actor";
 import { db } from "../db";
-import { QueueAPI } from "../queue";
-import { RealtimeAPI } from "../realtime";
-import { Message, MessageInsert } from "./message.sql";
+import { Realtime } from "../realtime";
+import { messages } from "./message.sql";
 
-export namespace MessagesAPI {
+export type Message = typeof messages.$inferSelect;
+
+export namespace Message {
+  const sqs = new SQSClient({});
+
+  export const Insert = createInsertSchema(messages, {
+    createdAt: z.coerce.date(),
+    toolCalls: z.array(z.unknown()).nullish(),
+  });
+  export type Insert = z.infer<typeof Insert>;
+
+  export const Event = {
+    generateResponse: {
+      input: z.object({
+        userId: z.string(),
+        message: createSelectSchema(messages, {
+          createdAt: z.coerce.date(),
+          toolCalls: z.array(z.unknown()).nullable(),
+        }),
+      }),
+    },
+  };
+
   export async function list(chatId: string) {
     return await db
       .select()
-      .from(Message)
-      .where(eq(Message.chatId, chatId))
-      .orderBy(asc(Message.createdAt));
+      .from(messages)
+      .where(eq(messages.chatId, chatId))
+      .orderBy(asc(messages.createdAt));
   }
 
-  export async function create(input: Omit<MessageInsert, "id">) {
-    const message: Message = {
-      id: nanoid(),
-      chatId: input.chatId,
-      role: input.role,
-      content: input.content ?? null,
-      toolCallId: input.toolCallId ?? null,
-      toolCalls: input.toolCalls ?? null,
-      createdAt: new Date(),
-    };
+  export async function create(input: z.infer<typeof Insert>) {
+    const { userId } = Actor.use();
+    const [message] = await db.insert(messages).values(input).returning();
     await Promise.all([
-      db.insert(Message).values(message),
-      RealtimeAPI.onMessageChanged(message),
+      Realtime.onMessageChanged(message),
       message.role === "user"
-        ? QueueAPI.enqueue({
-            type: "GenerateMessageResponseQueue",
-            body: { message },
-          })
+        ? sqs.send(
+            new SendMessageCommand({
+              QueueUrl: Resource.GenerateMessageResponseQueue.url,
+              MessageBody: JSON.stringify({ userId, message }),
+            })
+          )
         : Promise.resolve(),
     ]);
     return message;
   }
 
-  export async function update(id: string, input: Partial<Message>) {
+  export async function patch(
+    id: string,
+    input: { content: string | null; toolCalls?: unknown[] | null }
+  ) {
     const [message] = await db
-      .update(Message)
+      .update(messages)
       .set(input)
-      .where(eq(Message.id, id))
+      .where(eq(messages.id, id))
       .returning();
-    await RealtimeAPI.onMessageChanged(message);
+    await Realtime.onMessageChanged(message);
   }
 
   export async function del(id: string) {
-    await db.delete(Message).where(eq(Message.id, id));
+    await db.delete(messages).where(eq(messages.id, id));
   }
 }

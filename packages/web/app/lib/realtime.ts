@@ -1,10 +1,10 @@
 import { createListenerMiddleware, ListenerEffectAPI } from "@reduxjs/toolkit";
 import mqtt from "mqtt";
 
-import { Message } from "@project-4/core/db";
+import type { Message } from "@project-4/core/types";
 
 import { api } from "./api";
-import { chatIdChanged, tokenChanged } from "./state";
+import { chatIdChanged, initialize } from "./state";
 import { Dispatch, State } from "./store";
 
 const listener = createListenerMiddleware();
@@ -17,13 +17,17 @@ type TypedListenerAPI = ListenerEffectAPI<State, Dispatch>;
 
 if (typeof window !== "undefined") {
   startListening({
-    actionCreator: tokenChanged,
+    actionCreator: initialize,
     effect: async (action, listenerAPI) => {
       if (!action.payload) {
         console.warn("[RealTimeClient] no token");
         return;
       }
-      const client = new RealTimeClient(action.payload, listenerAPI);
+      const client = new RealTimeClient(
+        action.payload.token,
+        action.payload.userId,
+        listenerAPI,
+      );
       await client.run();
     },
   });
@@ -34,9 +38,11 @@ class RealTimeClient {
 
   constructor(
     token: string,
+    private readonly userId: string,
     private readonly listenerAPI: TypedListenerAPI,
   ) {
     this.connection = this.createConnection(token);
+
     this.connection.on("connect", () => {
       console.log("[RealTimeClient] connected");
     });
@@ -101,8 +107,10 @@ class RealTimeClient {
 
       console.log("[RealTimeClient] subscribing to", chatId);
 
-      const topic = `${import.meta.env.VITE_REALTIME_NAMESPACE}/${chatId}`;
-      this.connection.subscribe(topic, { qos: 1 });
+      const topic = `${import.meta.env.VITE_REALTIME_NAMESPACE}/${this.userId}/${chatId}`;
+      await this.connection.subscribeAsync(topic, { qos: 1 });
+
+      this.listenerAPI.dispatch(api.util.invalidateTags(["Message"]));
 
       const fork = this.listenerAPI.fork(async () => {
         await this.waitForChatId(chatId);
