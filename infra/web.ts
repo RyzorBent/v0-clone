@@ -3,7 +3,7 @@ import { dns } from "./dns";
 import { realtime } from "./realtime";
 import { secrets } from "./secrets";
 
-export const web = new sst.aws.Remix("Web", {
+export const web = new sst.aws.Remix("WebRemix", {
   path: "packages/web",
   link: [api, realtime],
   environment: {

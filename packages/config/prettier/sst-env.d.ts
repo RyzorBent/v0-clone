@@ -39,7 +39,7 @@ declare module "sst" {
       "endpoint": string
       "type": "sst.aws.Realtime"
     }
-    "Web": {
+    "WebRemix": {
       "type": "sst.aws.Remix"
       "url": string
     }
