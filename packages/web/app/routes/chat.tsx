@@ -2,7 +2,7 @@ import { UserButton } from "@clerk/remix";
 import { NavLink, Outlet, useNavigate } from "@remix-run/react";
 import { Ellipsis, Loader2, Trash } from "lucide-react";
 
-import type { Chat } from "@project-4/core/db";
+import type { Chat } from "@project-4/core/types";
 
 import { Button, buttonVariants } from "~/components/ui/button";
 import {

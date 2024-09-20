@@ -6,6 +6,7 @@ export const stateSlice = createSlice({
     token: null as string | null,
     userId: null as string | null,
     chatId: null as string | null,
+    realtimeActiveToken: null as string | null,
   },
   reducers: {
     initialize: (
@@ -18,7 +19,14 @@ export const stateSlice = createSlice({
     chatIdChanged: (state, action: PayloadAction<string | null>) => {
       state.chatId = action.payload;
     },
+    realtimeActiveTokenChanged: (
+      state,
+      action: PayloadAction<string | null>,
+    ) => {
+      state.realtimeActiveToken = action.payload;
+    },
   },
 });
 
-export const { initialize, chatIdChanged } = stateSlice.actions;
+export const { initialize, chatIdChanged, realtimeActiveTokenChanged } =
+  stateSlice.actions;

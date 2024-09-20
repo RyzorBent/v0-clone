@@ -15,7 +15,7 @@ export const column = {
   id: <TName extends string>(name: TName) => {
     return column
       .nanoid(name)
-      .primaryKey()
-      .$defaultFn(() => nanoid());
+      .$defaultFn(() => nanoid())
+      .primaryKey();
   },
 };

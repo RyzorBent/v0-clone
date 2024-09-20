@@ -1,11 +1,11 @@
 import { createHash } from "crypto";
 import { mkdir, readFile, writeFile } from "fs/promises";
-import { OpenAI } from "openai";
 import { join } from "path";
+import { OpenAI } from "openai";
 import { Resource } from "sst";
 
 const openai = new OpenAI({
-  apiKey: Resource.OPENAI_API_KEY.value,
+  apiKey: Resource.OpenAIAPIKey.value,
 });
 
 const CACHE_DIR = join(process.cwd(), "node_modules", ".cache/embeddings");

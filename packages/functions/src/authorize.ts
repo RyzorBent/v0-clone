@@ -1,20 +1,24 @@
 import { createRemoteJWKSet, jwtVerify } from "jose";
 import { Resource } from "sst";
 
-export const authorize = async (token: string) => {
+import type { PublicActor, UserActor } from "@project-4/core/actor";
+
+export const authorize = async (
+  token: string,
+): Promise<UserActor | PublicActor> => {
   try {
     const { payload } = await jwtVerify(
       token,
       createRemoteJWKSet(
-        new URL(`${Resource.ClerkIssuer.value}/.well-known/jwks.json`)
+        new URL(`${Resource.ClerkIssuer.value}/.well-known/jwks.json`),
       ),
       {
         audience: ["headstarter-projects-lambda"],
         issuer: Resource.ClerkIssuer.value,
-      }
+      },
     );
-    return payload.sub;
-  } catch (error) {
-    return null;
+    return { type: "user", userId: payload.sub! };
+  } catch {
+    return { type: "public" };
   }
 };

@@ -1,7 +1,8 @@
 import { and, eq } from "drizzle-orm";
 import { z } from "zod";
+
 import { Actor } from "../actor";
-import { db } from "../db";
+import { withTransaction } from "../db/transaction";
 import { chats } from "./chat.sql";
 
 export type Chat = typeof chats.$inferSelect;
@@ -12,39 +13,57 @@ export namespace Chat {
   });
 
   export async function list() {
-    const { userId } = Actor.use();
-    return await db.select().from(chats).where(eq(chats.userId, userId));
+    return await withTransaction(async (tx) => {
+      const { userId } = Actor.useUser();
+      return await tx.select().from(chats).where(eq(chats.userId, userId));
+    });
   }
 
   export async function get(chatId: string) {
-    const { userId } = Actor.use();
-    const chat = await db.query.chats.findFirst({
-      where: and(eq(chats.id, chatId), eq(chats.userId, userId)),
+    return await withTransaction(async (tx) => {
+      const actor = Actor.use();
+      const chat = await tx.query.chats.findFirst({
+        where: and(
+          eq(chats.id, chatId),
+          actor.type === "user"
+            ? eq(chats.userId, actor.userId)
+            : eq(chats.public, true),
+        ),
+      });
+      return chat;
     });
-    return chat;
   }
 
   export async function create() {
-    const { userId } = Actor.use();
-    const [chat] = await db.insert(chats).values({ userId }).returning();
-    return chat;
+    return await withTransaction(async (tx) => {
+      const actor = Actor.useUser();
+      const [chat] = await tx
+        .insert(chats)
+        .values({ userId: actor.userId })
+        .returning();
+      return chat;
+    });
   }
 
   export async function patch(
     chatId: string,
-    input: z.infer<typeof PatchInput>
+    input: z.infer<typeof PatchInput>,
   ) {
-    const { userId } = Actor.use();
-    await db
-      .update(chats)
-      .set(input)
-      .where(and(eq(chats.id, chatId), eq(chats.userId, userId)));
+    return await withTransaction(async (tx) => {
+      const actor = Actor.useUser();
+      await tx
+        .update(chats)
+        .set(input)
+        .where(and(eq(chats.id, chatId), eq(chats.userId, actor.userId)));
+    });
   }
 
   export async function del(id: string) {
-    const { userId } = Actor.use();
-    await db
-      .delete(chats)
-      .where(and(eq(chats.id, id), eq(chats.userId, userId)));
+    return await withTransaction(async (tx) => {
+      const actor = Actor.useUser();
+      await tx
+        .delete(chats)
+        .where(and(eq(chats.id, id), eq(chats.userId, actor.userId)));
+    });
   }
 }

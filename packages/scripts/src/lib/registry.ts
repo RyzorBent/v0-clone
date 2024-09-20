@@ -1,4 +1,5 @@
 import { z } from "zod";
+
 import { fetchJSON, fetchText } from "./fetch";
 
 const REGISTRY_BASE_URL = "https://ui.shadcn.com/registry";
@@ -56,7 +57,7 @@ export const RegistryStyle = z.object({
 export type RegistryStyle = z.infer<typeof RegistryStyle>;
 
 export const fetchRegistryBaseColor = async (
-  color: string
+  color: string,
 ): Promise<RegistryBaseColor> => {
   const url = `${REGISTRY_BASE_URL}/colors/${color}.json`;
   const data = await fetchJSON(url);
@@ -79,7 +80,7 @@ export type RegistryBaseColor = z.infer<typeof RegistryBaseColor>;
 
 export const fetchRegistryComponent = async (
   style: string,
-  name: string
+  name: string,
 ): Promise<RegistryComponent> => {
   const url = `${REGISTRY_BASE_URL}/styles/${style}/${name}.json`;
   const data = await fetchJSON(url);
@@ -103,7 +104,7 @@ export type RegistryComponent = z.infer<typeof RegistryComponent>;
 
 export const fetchRegistryExample = async (
   style: string,
-  name: string
+  name: string,
 ): Promise<string> => {
   const internalRegistry = await fetchCompleteInternalRegistry();
   const registryItem = internalRegistry[style]?.[name];
@@ -117,7 +118,7 @@ export const fetchRegistryExample = async (
     subdirectory = "block";
   } else {
     throw new Error(
-      `Registry item has no subdirectory: ${style}/${name} (${registryItem.type})`
+      `Registry item has no subdirectory: ${style}/${name} (${registryItem.type})`,
     );
   }
   const url = `https://raw.githubusercontent.com/shadcn-ui/ui/main/apps/www/registry/${style}/${subdirectory}/${name}.tsx`;
@@ -146,15 +147,15 @@ export const InternalRegistry = z.record(
       source: z.string(),
       category: z.preprocess(
         (val) => (val === "undefined" ? undefined : val),
-        z.string().optional()
+        z.string().optional(),
       ),
       subcategory: z.preprocess(
         (val) => (val === "undefined" ? undefined : val),
-        z.string().optional()
+        z.string().optional(),
       ),
       chunks: z.array(z.any()),
-    })
-  )
+    }),
+  ),
 );
 export type InternalRegistry = z.infer<typeof InternalRegistry>;
 
@@ -165,7 +166,7 @@ const fetchCompleteInternalRegistry = async () => {
     return internalRegistry;
   }
   const text = await fetchText(
-    "https://raw.githubusercontent.com/shadcn-ui/ui/main/apps/www/__registry__/index.tsx"
+    "https://raw.githubusercontent.com/shadcn-ui/ui/main/apps/www/__registry__/index.tsx",
   );
   const content = text
     .match(/export const Index: Record<string, any> = ({[\s\S]+})/)?.[1]

@@ -4,34 +4,41 @@ import mqtt from "mqtt";
 import type { Message } from "@project-4/core/types";
 
 import { api } from "./api";
-import { chatIdChanged, initialize } from "./state";
+import { chatIdChanged, initialize, realtimeActiveTokenChanged } from "./state";
 import { Dispatch, State } from "./store";
 
 const listener = createListenerMiddleware();
 
 export const middleware = listener.middleware;
 
-const startListening = listener.startListening.withTypes<State, Dispatch>();
+const typedStartListening = listener.startListening.withTypes<
+  State,
+  Dispatch
+>();
 
 type TypedListenerAPI = ListenerEffectAPI<State, Dispatch>;
 
-if (typeof window !== "undefined") {
-  startListening({
+export const startListening = () =>
+  typedStartListening({
     actionCreator: initialize,
     effect: async (action, listenerAPI) => {
-      if (!action.payload) {
-        console.warn("[RealTimeClient] no token");
+      if (
+        listenerAPI.getState().state.realtimeActiveToken ===
+        action.payload.token
+      ) {
+        console.log("[RealTimeClient] already initialized");
         return;
       }
+      console.log("[RealTimeClient] initializing");
       const client = new RealTimeClient(
         action.payload.token,
         action.payload.userId,
         listenerAPI,
       );
+      listenerAPI.dispatch(realtimeActiveTokenChanged(action.payload.token));
       await client.run();
     },
   });
-}
 
 class RealTimeClient {
   private connection: mqtt.MqttClient;
@@ -52,11 +59,14 @@ class RealTimeClient {
     this.connection.on("end", () => {
       console.log("[RealTimeClient] end");
     });
-    this.connection.on("message", (topic, rawData) => {
+    this.connection.on("message", (topic, payload) => {
+      console.log("[RealTimeClient] message", topic);
       const chatId = topic.split("/").pop();
       if (!chatId) return;
 
-      const body = JSON.parse(rawData.toString()) as
+      const body = JSON.parse(
+        new TextDecoder("utf8").decode(new Uint8Array(payload)),
+      ) as
         | { type: "title"; title: string }
         | { type: "message"; message: Message };
 
@@ -76,7 +86,6 @@ class RealTimeClient {
       `wss://${import.meta.env.VITE_REALTIME_ENDPOINT}/mqtt?x-amz-customauthorizer-name=${import.meta.env.VITE_REALTIME_AUTHORIZER}`,
       {
         protocolVersion: 5,
-        manualConnect: typeof window === "undefined", // disable auto-connect during SSR
         username: "", // workaround for sst authorizer bug
         password: token,
         clientId: `client_${crypto.randomUUID()}`,
@@ -86,6 +95,11 @@ class RealTimeClient {
 
   async run() {
     try {
+      if (!this.connection.connected) {
+        await new Promise((resolve) =>
+          this.connection.once("connect", resolve),
+        );
+      }
       this.listenerAPI.cancelActiveListeners();
       await this.runEventLoop();
     } catch (error) {
@@ -105,10 +119,9 @@ class RealTimeClient {
         continue;
       }
 
-      console.log("[RealTimeClient] subscribing to", chatId);
-
       const topic = `${import.meta.env.VITE_REALTIME_NAMESPACE}/${this.userId}/${chatId}`;
       await this.connection.subscribeAsync(topic, { qos: 1 });
+      console.log("[RealTimeClient] subscribed to", topic);
 
       this.listenerAPI.dispatch(api.util.invalidateTags(["Message"]));
 

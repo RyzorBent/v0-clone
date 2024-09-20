@@ -1,11 +1,10 @@
-import { z } from "zod";
+import { STYLE } from "../constants";
 import { fetchText } from "./fetch";
 import { fetchRegistryExample } from "./registry";
-import { STYLE } from "../constants";
 import { transformCode } from "./transform";
 
 export const fetchComponentDocumentation = async (
-  component: string
+  component: string,
 ): Promise<{
   title: string;
   description: string;
@@ -29,7 +28,7 @@ export const fetchComponentDocumentation = async (
         return `PREVIEW:${name}`;
       }
       return "";
-    }
+    },
   );
 
   for (const preview of previewComponents) {
@@ -40,7 +39,7 @@ export const fetchComponentDocumentation = async (
         <ComponentPreview name="${preview.name}" description="${preview.description}">
           ${code}
         </ComponentPreview>
-      `
+      `,
     );
   }
 

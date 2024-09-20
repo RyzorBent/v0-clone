@@ -1,4 +1,6 @@
 import { readFile, writeFile } from "node:fs/promises";
+
+import { BASE_COLOR, STYLE } from "./constants";
 import { resolvePackageDependency } from "./lib/npm";
 import {
   fetchRegistryBaseColor,
@@ -6,7 +8,6 @@ import {
   fetchRegistryIndex,
 } from "./lib/registry";
 import { transformCode } from "./lib/transform";
-import { BASE_COLOR, STYLE } from "./constants";
 
 const dependencies = new Set<string>([
   "tailwindcss-animate",
@@ -30,14 +31,14 @@ const [resolvedDependencies, resolvedComponents, resolvedBaseColor] =
     Promise.all(Array.from(dependencies).map(resolvePackageDependency)),
     Promise.all(
       Array.from(components).map((component) =>
-        fetchRegistryComponent(STYLE, component)
-      )
+        fetchRegistryComponent(STYLE, component),
+      ),
     ),
     fetchRegistryBaseColor(BASE_COLOR),
   ]);
 
 const builtPackageJson = JSON.parse(
-  await readFile("./templates/package.json", "utf-8")
+  await readFile("./templates/package.json", "utf-8"),
 ) as {
   dependencies: Record<string, string>;
   devDependencies: Record<string, string>;
@@ -61,23 +62,23 @@ const builtConfig = {
     "components.json": await readFile("./templates/components.json", "utf-8"),
     "tailwind.config.js": await readFile(
       "./templates/tailwind.config.js",
-      "utf-8"
+      "utf-8",
     ),
     "postcss.config.js": await readFile(
       "./templates/postcss.config.js",
-      "utf-8"
+      "utf-8",
     ),
     "tsconfig.json": await readFile("./templates/tsconfig.json", "utf-8"),
     "vite.config.ts": await readFile("./templates/vite.config.ts", "utf-8"),
     "styles.css": resolvedBaseColor.cssVarsTemplate,
     "src/lib/utils.ts": await readFile("./templates/utils.ts", "utf-8"),
     ...Object.fromEntries(
-      builtComponents.map(({ path, content }) => [path, content])
+      builtComponents.map(({ path, content }) => [path, content]),
     ),
   },
 };
 
 await writeFile(
   "../web/app/lib/editor.json",
-  JSON.stringify(builtConfig, null, 2) + "\n"
+  JSON.stringify(builtConfig, null, 2) + "\n",
 );

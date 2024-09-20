@@ -5,6 +5,7 @@ export const transformCode = (code: string) => {
     .replace(/"use client"\n\n/g, "")
     .replace(/@\/lib\/utils/, components.aliases.utils)
     .replace(/@\/components\/ui/g, components.aliases.ui)
+    .replace(/@\/hooks/g, components.aliases.hooks)
     .replace(/@\/registry\/[^/]+\/ui/g, components.aliases.ui)
     .replace(/@\/registry\/[^/]+/g, components.aliases.ui)
     .replace(/import ({ )?Link( })? from "next\/link"\n/g, "")

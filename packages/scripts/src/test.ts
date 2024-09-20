@@ -41,7 +41,7 @@ while (true) {
           content: value.message.content?.slice(0, 100),
         },
       },
-      { depth: null }
+      { depth: null },
     );
   } else {
     console.dir({ ...value }, { depth: null });

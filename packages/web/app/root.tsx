@@ -13,6 +13,7 @@ import { useRef } from "react";
 import { Provider } from "react-redux";
 
 import { Toaster } from "~/components/ui/sonner";
+import { startListening } from "./lib/realtime";
 import { initialize } from "./lib/state";
 import { store } from "./lib/store";
 
@@ -62,7 +63,8 @@ export function Layout({ children }: { children: React.ReactNode }) {
 export default ClerkApp(function App() {
   const { token, userId } = useLoaderData<typeof loader>();
   const ref = useRef<boolean>(false);
-  if (token && userId && !ref.current) {
+  if (token && userId && !ref.current && typeof window !== "undefined") {
+    startListening();
     store.dispatch(initialize({ token, userId }));
     ref.current = true;
   }

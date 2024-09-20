@@ -1,18 +1,20 @@
-import { AsyncLocalStorage } from "async_hooks";
+import { createContext } from "./context";
 
-const storage = new AsyncLocalStorage<{
+export interface UserActor {
+  type: "user";
   userId: string;
-}>();
+}
 
-export const Actor = {
-  use() {
-    const actor = storage.getStore();
-    if (!actor) {
-      throw new Error("Actor not found");
+export interface PublicActor {
+  type: "public";
+}
+
+export const Actor = createContext<UserActor | PublicActor>().extend({
+  useUser() {
+    const actor = this.use();
+    if (actor.type === "user") {
+      return actor;
     }
-    return actor;
+    throw new Error("Not a user");
   },
-  async with<T>(userId: string, callback: () => Promise<T>) {
-    return await storage.run({ userId }, callback);
-  },
-};
+});

@@ -1,7 +1,7 @@
 import { fetchJSON } from "./fetch";
 
 export const resolvePackageDependency = async (
-  packageName: string
+  packageName: string,
 ): Promise<{ name: string; version: string }> => {
   const parsed = /^(.[^@]+)@?(\d+\.\d+\.\d+)?$/.exec(packageName);
   if (!parsed) {
@@ -13,6 +13,6 @@ export const resolvePackageDependency = async (
     return { name, version };
   }
   return await fetchJSON<{ name: string; version: string }>(
-    `https://registry.npmjs.org/${name}/latest`
+    `https://registry.npmjs.org/${name}/latest`,
   );
 };

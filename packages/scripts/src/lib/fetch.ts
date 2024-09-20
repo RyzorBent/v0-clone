@@ -24,14 +24,13 @@ export async function fetchText(url: string): Promise<string> {
     }
     return data;
   } catch {
-    throw new Error("cache miss");
     const res = await fetch(url);
     if (!res.ok) {
       if (res.status === 404) {
         await writeFile(
           cachePath,
           JSON.stringify({ url, data: null }),
-          "utf-8"
+          "utf-8",
         );
       }
       throw new Error(`Failed to fetch ${url}: ${res.statusText}`);

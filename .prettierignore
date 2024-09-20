@@ -1,0 +1,23 @@
+sst-env.d.ts
+
+# dependencies
+node_modules
+
+# sst
+.sst
+
+# tmp files
+.#*
+
+# env 
+.env*.local
+.env
+
+# next
+.next
+.open-next
+
+# misc
+.DS_Store
+
+dist

@@ -10,17 +10,26 @@
     ]
   },
   "scripts": {
-    "clean": "git clean -xdf node_modules"
+    "clean": "git clean -xdf node_modules",
+    "format": "prettier --write . --ignore-path ../../.prettierignore",
+    "format:check": "prettier --check . --ignore-path ../../.prettierignore",
+    "lint": "eslint .",
+    "lint:fix": "eslint --fix ."
   },
   "dependencies": {
     "@hono/zod-validator": "^0.2.2",
-    "@project-4/core": "workspace:*",
+    "@project-4/core": "workspace:^",
     "hono": "^4.6.2",
     "jose": "^5.9.2",
     "zod": "catalog:"
   },
   "devDependencies": {
+    "@project-4/config-eslint": "workspace:^",
+    "@project-4/config-prettier": "workspace:^",
     "@tsconfig/node20": "^20.1.4",
-    "@types/aws-lambda": "^8.10.145"
-  }
+    "@types/aws-lambda": "^8.10.145",
+    "eslint": "catalog:",
+    "prettier": "catalog:"
+  },
+  "prettier": "@project-4/config-prettier"
 }
