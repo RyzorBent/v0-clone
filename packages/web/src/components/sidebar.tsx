@@ -11,9 +11,9 @@ import {
   TooltipTrigger,
 } from "~/components/ui/tooltip";
 import { useCreateChatMutation } from "~/lib/api";
+import { useNavigateToChat } from "~/lib/hooks";
 import { HistoryDropdownContent } from "./history-dropdown-content";
 import { DropdownMenu, DropdownMenuTrigger } from "./ui/dropdown-menu";
-import { useNavigateToChat } from "~/lib/hooks";
 
 export function Sidebar() {
   const [createChat, { isLoading }] = useCreateChatMutation();

@@ -1,12 +1,12 @@
 import { useAuth } from "@clerk/clerk-react";
+import { useMemo } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
 import type { Message } from "@project-4/core/types";
 
 import { useListMessagesQuery, usePrefetch } from "~/lib/api";
-import { useAppDispatch, useAppSelector } from "./store";
 import { activeChatChanged } from "./state";
-import { useMemo } from "react";
+import { useAppDispatch, useAppSelector } from "./store";
 
 interface Artifact {
   title: string;

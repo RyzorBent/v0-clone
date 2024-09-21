@@ -13,11 +13,11 @@ import {
   useListMessagesQuery,
 } from "~/lib/api";
 import {
+  useArtifactExists,
   useChatId,
   useIsAuthLoaded,
   useMessage,
   useReversedMessageIndices,
-  useArtifactExists,
 } from "~/lib/hooks";
 import { artifactOpenChanged } from "~/lib/state";
 import { useAppDispatch, useAppSelector } from "~/lib/store";
@@ -82,7 +82,7 @@ export function ChatPage() {
       <div
         className={cn(
           "transition-all duration-300",
-          artifactOpen ? "flex w-1/2  flex-col border-l bg-muted" : "w-0",
+          artifactOpen ? "flex w-1/2 flex-col border-l bg-muted" : "w-0",
         )}
       >
         {artifactOpen && <ArtifactContent />}
