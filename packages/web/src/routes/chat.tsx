@@ -14,8 +14,8 @@ import {
 } from "~/lib/api";
 import {
   useArtifactExists,
+  useAuthLoaded,
   useChatId,
-  useIsAuthLoaded,
   useMessage,
   useReversedMessageIndices,
 } from "~/lib/hooks";
@@ -25,7 +25,7 @@ import { cn } from "~/lib/utils";
 
 export function ChatPage() {
   const chatId = useChatId();
-  const isAuthLoaded = useIsAuthLoaded();
+  const { isLoaded, userId } = useAuthLoaded();
   const { chat, isChatLoading } = useGetChatQuery(chatId, {
     selectFromResult: ({ data, isLoading }) => ({
       chat: data,
@@ -45,7 +45,7 @@ export function ChatPage() {
     }
   }, [artifactExists, dispatch]);
 
-  if (isChatLoading || messages.isLoading || !isAuthLoaded) {
+  if (isChatLoading || messages.isLoading || !isLoaded) {
     return (
       <div className="flex flex-1 items-center justify-center">
         <Loader2 className="size-8 animate-spin text-muted-foreground" />
@@ -77,7 +77,7 @@ export function ChatPage() {
       >
         <ChatHeader chat={chat} />
         <Messages />
-        <MessageInput chatId={chat.id} />
+        {userId === chat.userId && <MessageInput chatId={chat.id} />}
       </div>
       <div
         className={cn(

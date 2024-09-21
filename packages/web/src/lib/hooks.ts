@@ -29,12 +29,12 @@ export const useNavigateToChat = () => {
   };
 };
 
-export const useIsAuthLoaded = () => {
+export const useAuthLoaded = () => {
   const token = useAppSelector(({ state }) => state.token);
-  const { isLoaded, isSignedIn } = useAuth();
-  if (!isLoaded) return false;
-  if (!isSignedIn) return true;
-  return !!token;
+  const { isLoaded, isSignedIn, userId } = useAuth();
+  if (!isLoaded) return { isLoaded: false, userId: null };
+  if (!isSignedIn || !token) return { isLoaded: true, userId: null };
+  return { isLoaded: true, userId };
 };
 
 export const useChatId = () => {

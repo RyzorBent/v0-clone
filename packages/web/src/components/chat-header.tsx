@@ -35,7 +35,7 @@ export function ChatHeader({ chat }: { chat: Chat }) {
   const { userId } = useAuth();
 
   if (chat.userId !== userId) {
-    return null;
+    return <div className="h-16" />;
   }
 
   return (
