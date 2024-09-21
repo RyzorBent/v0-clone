@@ -11,23 +11,40 @@ export function Code({ children = "" }: { children?: string }) {
   const style = isDarkMode ? darkStyle : lightStyle;
 
   return (
-    <SyntaxHighlighter language="tsx" style={style} showLineNumbers wrapLines>
+    <SyntaxHighlighter
+      language="tsx"
+      style={{
+        ...style,
+        'pre[class*="language-"]': {
+          ...style['pre[class*="language-"]'],
+          background: "transparent",
+        },
+        'code[class*="language-"]': {
+          ...style['code[class*="language-"]'],
+          background: "transparent",
+        },
+      }}
+      customStyle={{
+        flex: 1,
+      }}
+      showLineNumbers
+      wrapLines
+    >
       {children}
     </SyntaxHighlighter>
   );
 }
 
 const useIsDarkMode = () => {
-  const darkModeMediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
-
   return useSyncExternalStore(
     (callback) => {
-      darkModeMediaQuery.addEventListener("change", callback);
-      return () => {
-        darkModeMediaQuery.removeEventListener("change", callback);
-      };
+      const observer = new MutationObserver(callback);
+      observer.observe(document.documentElement, {
+        attributes: true,
+        attributeFilter: ["class"],
+      });
+      return () => observer.disconnect();
     },
-    () => darkModeMediaQuery.matches,
-    () => darkModeMediaQuery.matches,
+    () => document.documentElement.classList.contains("dark"),
   );
 };

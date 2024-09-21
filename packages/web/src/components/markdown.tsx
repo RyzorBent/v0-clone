@@ -63,10 +63,16 @@ const components = {
     <li className="leading-relaxed" {...props} />
   ),
   code: (props: React.HTMLAttributes<HTMLElement>) => (
-    <code className="bg-gray-100 p-1" {...props} />
+    <code
+      className="rounded-sm border bg-muted p-1 text-sm text-primary"
+      {...props}
+    />
   ),
   pre: (props: React.HTMLAttributes<HTMLPreElement>) => (
-    <pre className="bg-gray-100 p-1" {...props} />
+    <pre
+      className="rounded-sm border bg-muted p-1 text-sm text-primary"
+      {...props}
+    />
   ),
   img: (props: React.HTMLAttributes<HTMLImageElement>) => (
     <img className="w-full" {...props} />
