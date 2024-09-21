@@ -1,8 +1,9 @@
-import { Globe, Link2, Lock } from "lucide-react";
+import { Check, Globe, Link, Lock } from "lucide-react";
 import { useEffect, useState } from "react";
+import { toast } from "sonner";
 
 import { useGetChatQuery, usePatchChatMutation } from "~/lib/api";
-import { LoadingButton } from "./loading-button";
+import { cn } from "~/lib/utils";
 import { Button } from "./ui/button";
 import {
   Dialog,
@@ -29,6 +30,7 @@ export function DialogShareChat({
   const { data } = useGetChatQuery(chatId ?? "", { skip: !chatId });
 
   const [isPublic, setIsPublic] = useState(data?.public ?? false);
+  const [isCopied, setIsCopied] = useState(false);
 
   useEffect(() => {
     setIsPublic(data?.public ?? false);
@@ -65,19 +67,47 @@ export function DialogShareChat({
             onCheckedChange={async (checked) => {
               setIsPublic(checked);
               if (chatId) {
-                await patchChat({ id: chatId, public: checked });
+                const result = await patchChat({ id: chatId, public: checked });
+                if (result.error) {
+                  toast.error("Failed to update chat visibility");
+                  setIsPublic(!checked);
+                }
               }
             }}
+            disabled={isLoading}
           />
         </div>
         <DialogFooter>
           <Button variant="outline" onClick={() => setOpen(false)}>
             Dismiss
           </Button>
-          <LoadingButton disabled={!isPublic} loading={isLoading} type="submit">
-            <Link2 className="mr-1.5 size-4" />
+          <Button
+            disabled={!isPublic}
+            type="submit"
+            onClick={() => {
+              setIsCopied(true);
+              navigator.clipboard.writeText(
+                `${window.location.origin}/${chatId}`,
+              );
+              setTimeout(() => setIsCopied(false), 2500);
+            }}
+          >
+            <div className="relative mr-1.5 size-4">
+              <Link
+                className={cn(
+                  "absolute size-4 transition-opacity duration-100",
+                  isCopied ? "opacity-0 delay-0" : "opacity-100 delay-75",
+                )}
+              />
+              <Check
+                className={cn(
+                  "absolute size-4 transition-opacity duration-100",
+                  isCopied ? "opacity-100 delay-75" : "opacity-0 delay-0",
+                )}
+              />
+            </div>
             Copy Link
-          </LoadingButton>
+          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
