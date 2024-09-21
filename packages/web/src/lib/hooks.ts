@@ -70,7 +70,7 @@ export const useArtifact = () => {
 
   return useListMessagesQuery(chatId, {
     selectFromResult: ({ data, isSuccess }) => {
-      if (!data) return { code: null, isSuccess };
+      if (!data) return { artifact: null, isSuccess };
       for (let i = data.length - 1; i >= 0; i--) {
         const message = normalizeMessage(data[i]);
         if (message && "artifacts" in message && message.artifacts.length > 0) {
@@ -80,9 +80,14 @@ export const useArtifact = () => {
           };
         }
       }
-      return { code: null, isSuccess };
+      return { artifact: null, isSuccess };
     },
   });
+};
+
+export const useArtifactExists = () => {
+  const { artifact } = useArtifact();
+  return useMemo(() => artifact !== null, [artifact]);
 };
 
 const normalizeMessage = (message?: Message) => {

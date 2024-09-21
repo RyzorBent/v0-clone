@@ -1,5 +1,5 @@
 import { AppWindow, Loader2 } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { ArtifactContent } from "~/components/artifact-content";
 import { ChatHeader } from "~/components/chat-header";
@@ -17,8 +17,10 @@ import {
   useIsAuthLoaded,
   useMessage,
   useReversedMessageIndices,
+  useArtifactExists,
 } from "~/lib/hooks";
-import { useAppSelector } from "~/lib/store";
+import { artifactOpenChanged } from "~/lib/state";
+import { useAppDispatch, useAppSelector } from "~/lib/store";
 import { cn } from "~/lib/utils";
 
 export function ChatPage() {
@@ -34,6 +36,14 @@ export function ChatPage() {
     selectFromResult: ({ isLoading }) => ({ isLoading }),
   });
   const artifactOpen = useAppSelector(({ state }) => state.isArtifactOpen);
+  const artifactExists = useArtifactExists();
+  const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    if (artifactExists) {
+      dispatch(artifactOpenChanged(true));
+    }
+  }, [artifactExists, dispatch]);
 
   if (isChatLoading || messages.isLoading || !isAuthLoaded) {
     return (
@@ -72,10 +82,10 @@ export function ChatPage() {
       <div
         className={cn(
           "transition-all duration-300",
-          artifactOpen ? "flex w-1/2 flex-1 flex-col border-l bg-muted" : "w-0",
+          artifactOpen ? "flex w-1/2  flex-col border-l bg-muted" : "w-0",
         )}
       >
-        <ArtifactContent />
+        {artifactOpen && <ArtifactContent />}
       </div>
     </>
   );
