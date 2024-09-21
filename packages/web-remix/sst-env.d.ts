@@ -39,8 +39,8 @@ declare module "sst" {
       "endpoint": string
       "type": "sst.aws.Realtime"
     }
-    "WebRemix": {
-      "type": "sst.aws.Remix"
+    "Web": {
+      "type": "sst.aws.StaticSite"
       "url": string
     }
   }

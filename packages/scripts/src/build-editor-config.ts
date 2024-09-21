@@ -79,6 +79,6 @@ const builtConfig = {
 };
 
 await writeFile(
-  "../web/app/lib/editor.json",
+  "../web/src/lib/editor.json",
   JSON.stringify(builtConfig, null, 2) + "\n",
 );
