@@ -24,8 +24,6 @@ function ReduxEffects() {
   const params = useParams() as { id?: string };
 
   const { userId, getToken } = useAuth();
-  const prefetchChat = api.usePrefetch("getChat");
-  const prefetchMessages = api.usePrefetch("listMessages");
   const dispatch = useAppDispatch();
 
   useEffect(() => {
@@ -47,13 +45,11 @@ function ReduxEffects() {
 
   useEffect(() => {
     if (params.id) {
-      prefetchChat(params.id);
-      prefetchMessages(params.id);
       dispatch(activeChatChanged(params.id));
     } else {
       dispatch(activeChatChanged(null));
     }
-  }, [params.id, dispatch, prefetchChat, prefetchMessages]);
+  }, [params.id, dispatch]);
 
   return null;
 }

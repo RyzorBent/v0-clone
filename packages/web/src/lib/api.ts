@@ -82,4 +82,5 @@ export const {
   useCreateChatMutation,
   useDeleteChatMutation,
   usePatchChatMutation,
+  usePrefetch,
 } = api;

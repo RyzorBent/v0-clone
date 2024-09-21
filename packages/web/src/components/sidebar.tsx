@@ -1,6 +1,6 @@
 import { UserButton } from "@clerk/clerk-react";
 import { Code2, History, Plus } from "lucide-react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { toast } from "sonner";
 
 import { Button } from "~/components/ui/button";
@@ -11,15 +11,13 @@ import {
   TooltipTrigger,
 } from "~/components/ui/tooltip";
 import { useCreateChatMutation } from "~/lib/api";
-import { activeChatChanged } from "~/lib/state";
-import { useAppDispatch } from "~/lib/store";
 import { HistoryDropdownContent } from "./history-dropdown-content";
 import { DropdownMenu, DropdownMenuTrigger } from "./ui/dropdown-menu";
+import { useNavigateToChat } from "~/lib/hooks";
 
 export function Sidebar() {
   const [createChat, { isLoading }] = useCreateChatMutation();
-  const navigate = useNavigate();
-  const dispatch = useAppDispatch();
+  const navigateToChat = useNavigateToChat();
 
   return (
     <TooltipProvider delayDuration={0}>
@@ -43,8 +41,7 @@ export function Sidebar() {
                 onClick={async () => {
                   const result = await createChat();
                   if (result.data) {
-                    dispatch(activeChatChanged(result.data.id));
-                    navigate(`/${result.data.id}`);
+                    navigateToChat(result.data.id);
                   } else {
                     toast.error("Failed to create chat");
                   }

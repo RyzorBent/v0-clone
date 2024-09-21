@@ -1,13 +1,13 @@
 import { useAuth, useClerk } from "@clerk/clerk-react";
 import { ArrowUpRightFromSquare, Send } from "lucide-react";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 
 import { badgeVariants } from "~/components/ui/badge";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { useCreateChatMutation, useCreateMessageMutation } from "~/lib/api";
+import { useNavigateToChat } from "~/lib/hooks";
 import { cn } from "~/lib/utils";
 
 export function HomePage() {
@@ -110,7 +110,7 @@ const useCreateChatWithMessage = () => {
   const [createChat, { isLoading }] = useCreateChatMutation();
   const [createMessage] = useCreateMessageMutation();
   const [input, setInput] = useState("");
-  const navigate = useNavigate();
+  const navigateToChat = useNavigateToChat();
 
   const createChatWithMessage = async (message: string) => {
     if (!auth.isSignedIn) {
@@ -128,7 +128,7 @@ const useCreateChatWithMessage = () => {
         role: "user",
         content: message,
       }),
-      navigate(`/${res.data.id}`),
+      navigateToChat(res.data.id),
     ]);
   };
 

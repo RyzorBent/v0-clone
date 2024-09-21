@@ -1,10 +1,12 @@
 import { useAuth } from "@clerk/clerk-react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 import type { Message } from "@project-4/core/types";
 
-import { useListMessagesQuery } from "~/lib/api";
-import { useAppSelector } from "./store";
+import { useListMessagesQuery, usePrefetch } from "~/lib/api";
+import { useAppDispatch, useAppSelector } from "./store";
+import { activeChatChanged } from "./state";
+import { useMemo } from "react";
 
 interface Artifact {
   title: string;
@@ -12,6 +14,20 @@ interface Artifact {
   content: string;
   isComplete: boolean;
 }
+
+export const useNavigateToChat = () => {
+  const navigate = useNavigate();
+  const prefetchChat = usePrefetch("getChat");
+  const prefetchMessages = usePrefetch("listMessages");
+  const dispatch = useAppDispatch();
+
+  return (chatId: string) => {
+    dispatch(activeChatChanged(chatId));
+    prefetchChat(chatId);
+    prefetchMessages(chatId);
+    navigate(`/${chatId}`);
+  };
+};
 
 export const useIsAuthLoaded = () => {
   const token = useAppSelector(({ state }) => state.token);
