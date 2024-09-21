@@ -1,4 +1,5 @@
 import { createContext } from "./context";
+import { APIError } from "./error";
 
 export interface UserActor {
   type: "user";
@@ -15,6 +16,6 @@ export const Actor = createContext<UserActor | PublicActor>().extend({
     if (actor.type === "user") {
       return actor;
     }
-    throw new Error("Not a user");
+    throw APIError.unauthorized();
   },
 });

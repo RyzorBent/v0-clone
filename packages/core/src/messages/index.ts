@@ -1,14 +1,14 @@
 import { SendMessageCommand, SQSClient } from "@aws-sdk/client-sqs";
-import { eq } from "drizzle-orm";
+import { asc, eq } from "drizzle-orm";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 import { nanoid } from "nanoid";
 import { Resource } from "sst";
 import { z } from "zod";
 
 import { Actor } from "../actor";
-import { chats } from "../chat/chat.sql";
+import { Chat } from "../chat";
 import { withTransaction } from "../db/transaction";
-import { NonRetryableError } from "../error";
+import { APIError } from "../error";
 import { Realtime } from "../realtime";
 import { messages } from "./message.sql";
 
@@ -38,7 +38,11 @@ export namespace Message {
   export async function list(chatId: string) {
     return await withTransaction(async (tx) => {
       const [rows] = await Promise.all([
-        tx.select().from(messages).where(eq(messages.chatId, chatId)),
+        tx
+          .select()
+          .from(messages)
+          .where(eq(messages.chatId, chatId))
+          .orderBy(asc(messages.createdAt)),
         authorizeRead(chatId),
       ]);
       return rows;
@@ -59,7 +63,7 @@ export namespace Message {
       async (tx) =>
         await Promise.all([
           tx.insert(messages).values(message),
-          authorizeWrite(input.chatId),
+          Chat.touch(input.chatId),
         ]),
     );
     await Promise.all([
@@ -80,7 +84,7 @@ export namespace Message {
     await withTransaction(async (tx) => {
       await Promise.all([
         tx.update(messages).set(message).where(eq(messages.id, message.id)),
-        authorizeWrite(message.chatId),
+        Chat.touch(message.chatId),
       ]);
     });
     await Realtime.onMessageChanged(message);
@@ -91,11 +95,11 @@ export namespace Message {
       const [message] = await tx
         .delete(messages)
         .where(eq(messages.id, id))
-        .returning();
+        .returning({ chatId: messages.chatId });
       if (!message) {
         return;
       }
-      await authorizeWrite(message.chatId);
+      await Chat.touch(message.chatId);
     });
   }
 
@@ -104,39 +108,21 @@ export namespace Message {
       const actor = Actor.use();
       const chat = await tx.query.chats.findFirst({
         columns: { id: true, public: true, userId: true },
-        where: eq(chats.id, chatId),
+        where: (chats, { eq }) => eq(chats.id, chatId),
       });
       if (!chat) {
-        throw new NonRetryableError("Chat not found");
+        throw APIError.notFound("Chat not found");
       }
       if (actor.type === "public") {
         if (!chat.public) {
-          throw new NonRetryableError("Chat is not public");
+          throw APIError.unauthorized("Chat is not public");
         }
       } else {
         if (chat.userId !== actor.userId) {
-          throw new NonRetryableError(
+          throw APIError.unauthorized(
             `User ${actor.userId} cannot read chat ${chatId}`,
           );
         }
-      }
-      return true;
-    });
-  }
-  async function authorizeWrite(chatId: string) {
-    return await withTransaction(async (tx) => {
-      const actor = Actor.useUser();
-      const chat = await tx.query.chats.findFirst({
-        columns: { id: true, userId: true },
-        where: eq(chats.id, chatId),
-      });
-      if (!chat) {
-        throw new NonRetryableError("Chat not found");
-      }
-      if (chat.userId !== actor.userId) {
-        throw new NonRetryableError(
-          `User ${actor.userId} cannot write to chat ${chatId}`,
-        );
       }
       return true;
     });

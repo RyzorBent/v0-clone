@@ -10,6 +10,10 @@ export const chats = defineTable("chats", {
   userId: varchar("user_id", { length: 255 }).notNull(),
   public: boolean("public").notNull().default(false),
   createdAt: timestamp("created_at", { mode: "date" }).notNull().defaultNow(),
+  updatedAt: timestamp("updated_at", { mode: "date" })
+    .$onUpdateFn(() => new Date())
+    .notNull()
+    .defaultNow(),
 });
 
 export const chatsRelations = relations(chats, ({ many }) => ({

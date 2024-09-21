@@ -5,7 +5,7 @@ import { Actor } from "@project-4/core/actor";
 import { AI } from "@project-4/core/ai/index";
 import { Chat } from "@project-4/core/chat/index";
 import { createPool } from "@project-4/core/db/pool";
-import { NonRetryableError } from "@project-4/core/error";
+import { APIError } from "@project-4/core/error";
 import { Message } from "@project-4/core/messages/index";
 
 export const handler: SQSHandler = async (event) => {
@@ -23,7 +23,7 @@ export const handler: SQSHandler = async (event) => {
               type: "error",
               error,
               messageId,
-              retry: !(error instanceof NonRetryableError),
+              retry: error instanceof APIError ? error.retry : true,
             } as const;
           }
         }),
@@ -43,8 +43,8 @@ const handleGenerateMessageResponse = async ({
   message,
 }: z.infer<typeof Message.Event.generateResponse.input>) => {
   if (actor.type !== "user") {
-    throw new NonRetryableError(
-      `Cannot generate message response for non-user actor`,
+    throw APIError.unauthorized(
+      "Cannot generate message response for non-user actor",
     );
   }
   await Actor.with(actor, async () => {

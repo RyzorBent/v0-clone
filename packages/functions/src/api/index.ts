@@ -1,10 +1,12 @@
 import { zValidator } from "@hono/zod-validator";
 import { Hono } from "hono";
 import { handle } from "hono/aws-lambda";
+import { HTTPException } from "hono/http-exception";
 
 import { Actor } from "@project-4/core/actor";
 import { Chat } from "@project-4/core/chat/index";
 import { createPool } from "@project-4/core/db/pool";
+import { APIError } from "@project-4/core/error";
 import { Message } from "@project-4/core/messages/index";
 
 import { authorize } from "../authorize";
@@ -49,6 +51,13 @@ const app = new Hono()
     async (c) => {
       return c.json(await Message.create(c.req.valid("json")));
     },
-  );
+  )
+  .onError((error, c) => {
+    console.error(error);
+    if (error instanceof APIError || error instanceof HTTPException) {
+      return c.json({ error: error.message }, { status: error.status });
+    }
+    return c.json({ error: error.message }, { status: 500 });
+  });
 
 export const handler = handle(app);
