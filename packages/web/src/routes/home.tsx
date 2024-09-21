@@ -25,9 +25,7 @@ export function HomePage() {
 
       <div className="flex flex-col items-center gap-4">
         <div className="flex flex-col gap-2 text-center">
-          <h1 className="text-3xl font-semibold">
-            What can I help you ship today?
-          </h1>
+          <h1 className="text-3xl font-semibold">What can I help you ship?</h1>
           <p className="text-muted-foreground">
             Generate UI, ask questions, fix bugs, and more.
           </p>
@@ -47,9 +45,9 @@ export function HomePage() {
         </form>
         <div className="flex flex-row gap-2">
           {[
-            "Generate a multi-step onboarding flow",
-            "How can I structure LLM outputs",
-            "Write a custom hook for fetching data",
+            "Create a sticky navbar",
+            "Build a login page",
+            "Generate an onboarding wizard",
           ].map((prompt) => (
             <button
               key={prompt}
