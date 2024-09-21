@@ -9,11 +9,11 @@
     "clean": "git clean -xdf node_modules"
   },
   "dependencies": {
-    "@eslint/js": "^9.10.0",
+    "@eslint/js": "^9.11.0",
     "typescript-eslint": "^8.6.0"
   },
   "devDependencies": {
-    "@project-4/config-prettier": "workspace:",
+    "@project-4/config-prettier": "workspace:^",
     "@types/eslint__js": "^8.42.3",
     "prettier": "catalog:",
     "typescript": "catalog:"

@@ -18,7 +18,7 @@
     "@tsconfig/node20": "^20.1.4",
     "@types/node": "^20.16.5",
     "eslint": "catalog:",
-    "openai": "^4.60.1",
+    "openai": "^4.63.0",
     "prettier": "catalog:",
     "sst": "catalog:",
     "tsx": "^4.19.1",
