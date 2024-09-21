@@ -36,7 +36,11 @@ export default function Sandpack({ code, onStatusChange }: SandpackProps) {
         width: "100%",
       }}
     >
-      <SandpackPreview className="absolute inset-0" />
+      <SandpackPreview
+        className="absolute inset-0"
+        showNavigator={false}
+        showOpenInCodeSandbox={false}
+      />
       <SandpackAPIHandler code={code} onStatusChange={onStatusChange} />
     </SandpackProvider>
   );
