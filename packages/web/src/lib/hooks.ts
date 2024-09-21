@@ -105,7 +105,7 @@ const normalizeMessage = (message?: Message) => {
       artifacts.push({
         title,
         identifier,
-        content: artifactContent.trim(),
+        content: artifactContent.trim().replaceAll(/(```[^\n]*\n?|```)/g, ""),
         isComplete: !!closingTag,
       });
       return `<Artifact title="${title}" identifier="${identifier}" type="${type}" isComplete={${!!closingTag}} />`;
