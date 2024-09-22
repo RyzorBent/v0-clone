@@ -12,6 +12,7 @@
     "shell": "sst shell -- tsx"
   },
   "devDependencies": {
+    "@pinecone-database/pinecone": "^3.0.3",
     "@project-4/config-eslint": "workspace:^",
     "@project-4/config-prettier": "workspace:^",
     "@project-4/core": "workspace:^",

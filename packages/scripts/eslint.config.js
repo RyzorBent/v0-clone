@@ -8,6 +8,7 @@ export default [
   {
     rules: {
       "no-constant-condition": ["error", { checkLoops: false }],
+      "@typescript-eslint/no-explicit-any": "off",
     },
   },
 ];

@@ -4,6 +4,7 @@ export const secrets = {
   ClerkSecretKey: new sst.Secret("ClerkSecretKey"),
   DatabaseURL: new sst.Secret("DatabaseURL"),
   OpenAIAPIKey: new sst.Secret("OpenAIAPIKey"),
+  PineconeAPIKey: new sst.Secret("PineconeAPIKey"),
 };
 
 export const allSecrets = Object.values(secrets);
