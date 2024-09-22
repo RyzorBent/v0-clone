@@ -7,7 +7,8 @@ import { z } from "zod";
 import { Chat } from "../chat";
 import { Message } from "../messages";
 import { Realtime } from "../realtime";
-import knowledgeBase from "./knowledge-base.json";
+import blocks from "./blocks.json";
+import components from "./components.json";
 import * as Prompt from "./prompt";
 
 export namespace AI {
@@ -88,13 +89,33 @@ export namespace AI {
       messages,
       tools: [
         zodFunction({
-          name: "get-component-info",
+          name: "plan-component-generation",
           description:
-            "Use this to retrieve documentation and examples for the components you intend to use.",
+            "Before generating a component, please explain how you intend to implement the user's request. If you name a block or any components, the system will include them in the generation context for your reference.",
           parameters: z.object({
-            components: z.array(z.string()),
+            reasoning: z
+              .string()
+              .describe(
+                "Think from a design and implementation perspective about what the user wants to build and how you can implement it.",
+              ),
+            block: z
+              .string()
+              .optional()
+              .describe(
+                "If the user's request is similar to one of the given blocks, please provide the name of the block.",
+              ),
+            components: z
+              .array(z.string())
+              .describe(
+                "If you plan to use shadcn/ui components, list them here.",
+              ),
+            description: z
+              .string()
+              .describe(
+                "Describe how you plan to implement the user's request.",
+              ),
           }),
-          function: getComponentFromKnowledgeBase,
+          function: getShadcnContext,
         }),
       ],
       stream: true,
@@ -176,16 +197,40 @@ export namespace AI {
     } as OpenAI.Chat.Completions.ChatCompletionMessageParam;
   }
 
-  function getComponentFromKnowledgeBase(input: { components: string[] }) {
-    return input.components.map((component) => {
-      if (component in knowledgeBase) {
-        return knowledgeBase[component as keyof typeof knowledgeBase];
-      }
-      return {
-        title: component,
-        description:
-          "This is not a valid component. Do not attempt to use this component.",
-      };
-    });
+  function getShadcnContext(input: { components: string[]; block?: string }) {
+    const componentDocumentation = components
+      .filter((component) => input.components.includes(component.name))
+      .map(
+        (component) =>
+          `<Component name="${component.name}">\n${component.examples
+            .slice(0, 1)
+            .map(
+              (example) =>
+                `<Example name="${example.name}" description="${example.description}">\n${example.content}\n</Example>`,
+            )
+            .join(", ")}\n</Component>`,
+      );
+    const blockDocumentation = blocks
+      .filter((block) => block.name === input.block)
+      .map(
+        (block) =>
+          `<Block name="${block.name}" description="${block.description}">\n${block.content}\n</Block>`,
+      );
+
+    if (
+      componentDocumentation.length === 0 &&
+      blockDocumentation.length === 0
+    ) {
+      return "No component or block documentation found.";
+    }
+
+    let response = "";
+    if (componentDocumentation.length > 0) {
+      response += `Components:\n${componentDocumentation.join("\n")}`;
+    }
+    if (blockDocumentation.length > 0) {
+      response += `\n\nBlock:\n${blockDocumentation[0]}`;
+    }
+    return response;
   }
 }
