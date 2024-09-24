@@ -98,7 +98,7 @@ function AddToCodebase({
   messageId: string;
   disabled: boolean;
 }) {
-  const command = `npx shadcn add "${import.meta.env.VITE_API_URL}components/${messageId}"`;
+  const command = `npx shadcn add "${import.meta.env.VITE_API_URL}components/${messageId}/json"`;
   const [copied, setCopied] = useState(false);
 
   return (
