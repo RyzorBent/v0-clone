@@ -46,7 +46,7 @@ export namespace Artifact {
     const dependencies: string[] = [];
     const registryDependencies: string[] = [];
     for (const dependency of content.matchAll(
-      /^import .+ from ("|')(?<path>[^"']+)("|');?$/gm,
+      /^import\s+(?:(?:\{[^}]*\}|\w+)(?:\s*,\s*(?:\{[^}]*\}|\w+))*\s+from\s+)?["'](?<path>[^"']+)["'](?:;|\s*$)/gm,
     )) {
       if (!dependency.groups?.path) {
         continue;
