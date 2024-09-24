@@ -28,7 +28,11 @@ import {
   TooltipTrigger,
 } from "~/components/ui/tooltip";
 
-export function ChatHeader({ chat }: { chat: Chat }) {
+export function ChatHeader({
+  chat,
+}: {
+  chat: Pick<Chat, "id" | "userId" | "title" | "public">;
+}) {
   const [shareOpen, setShareOpen] = useState(false);
   const [renameOpen, setRenameOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);

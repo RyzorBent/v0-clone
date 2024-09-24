@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { ArtifactContent } from "~/components/artifact-content";
 import { ChatHeader } from "~/components/chat-header";
 import { Markdown } from "~/components/markdown";
+import { Status } from "~/components/status";
 import { Avatar, AvatarFallback } from "~/components/ui/avatar";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
@@ -17,7 +18,7 @@ import {
   useAuthLoaded,
   useChatId,
   useMessage,
-  useReversedMessageIndices,
+  useReversedMessageIds,
 } from "~/lib/hooks";
 import { artifactOpenChanged } from "~/lib/state";
 import { useAppDispatch, useAppSelector } from "~/lib/store";
@@ -28,7 +29,14 @@ export function ChatPage() {
   const { isLoaded, userId } = useAuthLoaded();
   const { chat, isChatLoading } = useGetChatQuery(chatId, {
     selectFromResult: ({ data, isLoading }) => ({
-      chat: data,
+      chat: data
+        ? {
+            id: data.id,
+            userId: data.userId,
+            title: data.title,
+            public: data.public,
+          }
+        : null,
       isChatLoading: isLoading,
     }),
   });
@@ -113,34 +121,44 @@ function MessageInput({ chatId }: { chatId: string }) {
 }
 
 function Messages() {
-  const { indices } = useReversedMessageIndices();
+  const { ids } = useReversedMessageIds();
 
   return (
     <div className="flex w-full flex-1 flex-col-reverse overflow-y-auto">
       <div className="flex-1" />
-      {indices.map((index) => (
-        <MessageItem key={index} index={index} />
+      {ids.map((id) => (
+        <MessageItem key={id} id={id} />
       ))}
     </div>
   );
 }
 
-function MessageItem({ index }: { index: number }) {
-  const { message } = useMessage(index);
+function MessageItem({ id }: { id: string }) {
+  const item = useMessage(id);
 
-  if (!message) return null;
+  if (item.type === null) return null;
+
+  let content: React.ReactNode;
+  if (item.type === "status") {
+    content = <Status status={item.status} />;
+  } else if (item.type === "message") {
+    if (!item.message.content) {
+      return null;
+    }
+    content = <Markdown content={item.message.content} />;
+  }
 
   return (
     <div className="mx-auto flex w-full max-w-prose flex-row gap-3 px-4 py-3">
       <div className="flex gap-2">
         <Avatar className="border">
           <AvatarFallback className="text-sm text-muted-foreground">
-            {message.role === "user" ? "You" : "v0"}
+            {item.message.role === "user" ? "You" : "v0"}
           </AvatarFallback>
         </Avatar>
       </div>
       <div className="flex flex-col gap-1.5 text-[15px] text-primary/90">
-        <Markdown>{message.content}</Markdown>
+        {content}
       </div>
     </div>
   );

@@ -42,25 +42,33 @@ export const useChatId = () => {
   return id;
 };
 
-export const useReversedMessageIndices = () => {
+export const useReversedMessageIds = () => {
   const chatId = useChatId();
   return useListMessagesQuery(chatId, {
     selectFromResult: ({ data }) => {
       return {
-        indices: (data?.map((_, index) => index) ?? []).reverse(),
+        ids: (data?.map((message) => message.id) ?? []).reverse(),
       };
     },
   });
 };
 
-export const useMessage = (messageIndex: number) => {
+const NULL = {
+  type: null,
+} as Omit<NormalizedMessage, "artifacts">;
+
+export const useMessage = (id: string) => {
   const chatId = useChatId();
   return useListMessagesQuery(chatId, {
-    selectFromResult: ({ data }) => {
-      const message = data?.[messageIndex];
-      return {
-        message: message ? normalizeMessage(message) : null,
-      };
+    selectFromResult: ({ data }): Omit<NormalizedMessage, "artifacts"> => {
+      if (!data) return NULL;
+      const index = data.findIndex((message) => message.id === id);
+      if (index === -1) return NULL;
+      const { artifacts: _, ...message } = normalizeMessage(data[index]);
+      if (message.type === "status" && data[index + 1]?.content) {
+        return NULL;
+      }
+      return message;
     },
   });
 };
@@ -72,10 +80,17 @@ export const useArtifact = () => {
     selectFromResult: ({ data, isSuccess }) => {
       if (!data) return { artifact: null, isSuccess };
       for (let i = data.length - 1; i >= 0; i--) {
-        const message = normalizeMessage(data[i]);
-        if (message && "artifacts" in message && message.artifacts.length > 0) {
+        const normalizedMessage = normalizeMessage(data[i]);
+        if (
+          normalizedMessage?.type === "message" &&
+          normalizedMessage.artifacts
+        ) {
           return {
-            artifact: message.artifacts[message.artifacts.length - 1] ?? null,
+            messageId: normalizedMessage.message.id,
+            artifact:
+              normalizedMessage.artifacts[
+                normalizedMessage.artifacts.length - 1
+              ] ?? null,
             isSuccess,
           };
         }
@@ -90,9 +105,36 @@ export const useArtifactExists = () => {
   return useMemo(() => artifact !== null, [artifact]);
 };
 
-const normalizeMessage = (message?: Message) => {
-  if (!message || !message.content || message.role === "tool") {
-    return null;
+type NormalizedMessage =
+  | {
+      type: "message";
+      message: Message;
+      status: never;
+      artifacts?: Artifact[];
+    }
+  | {
+      type: "status";
+      message: Message;
+      status: "generating-component" | "retrieving-context" | "thinking";
+      artifacts: never;
+    }
+  | { type: null; message: never; status: never; artifacts: never };
+
+const normalizeMessage = (message: Message): NormalizedMessage => {
+  if (message.role !== "assistant") {
+    return {
+      type: "message",
+      message,
+    } as NormalizedMessage;
+  } else if (!message.content) {
+    if (!message.metadata?.status) {
+      return { type: null } as NormalizedMessage;
+    }
+    return {
+      type: "status",
+      message,
+      status: message.metadata.status,
+    } as NormalizedMessage;
   }
 
   const artifacts: Artifact[] = [];
@@ -113,8 +155,11 @@ const normalizeMessage = (message?: Message) => {
   );
 
   return {
-    ...message,
-    content: normalizedContent,
-    artifacts,
-  };
+    type: "message" as const,
+    message: {
+      ...message,
+      content: normalizedContent,
+    },
+    artifacts: artifacts.length > 0 ? artifacts : undefined,
+  } as NormalizedMessage;
 };

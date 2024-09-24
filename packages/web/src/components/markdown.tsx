@@ -3,10 +3,10 @@ import React, { useMemo } from "react";
 
 import { ArtifactPreview } from "./artifact-preview";
 
-export function Markdown({ children }: { children: string }) {
+export function Markdown({ content }: { content: string }) {
   return useMemo(() => {
     const elements: JSX.Element[] = [];
-    const lines = children.split("\n\n");
+    const lines = content.split("\n\n");
     for (let i = 0; i < lines.length; i++) {
       const line = lines[i].trim();
       if (!line) continue;
@@ -23,7 +23,7 @@ export function Markdown({ children }: { children: string }) {
       }
     }
     return elements;
-  }, [children]);
+  }, [content]);
 }
 
 const components = {

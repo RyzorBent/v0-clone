@@ -22,7 +22,7 @@ export namespace Realtime {
     );
   }
 
-  export async function onMessageChanged(message: Message) {
+  export async function onMessageChanged({ context: _, ...message }: Message) {
     const { userId } = Actor.useUser();
     const topic = `${Resource.App.name}/${Resource.App.stage}/${userId}/${message.chatId}`;
 
