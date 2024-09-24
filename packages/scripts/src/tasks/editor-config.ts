@@ -64,7 +64,7 @@ async function resolveComponentFiles(
     index.map(async (component) => {
       const item = await getRegistryItem("default", component.name);
       for (const file of item.files ?? []) {
-        const path = transformComponentPath(file);
+        const path = transformComponentPath(file).replace("~/", "src/");
         const content = transformComponentSource(file.content!);
         files[path] = content;
       }

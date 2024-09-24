@@ -8,10 +8,13 @@ export const transformComponentPath = ({
   type,
 }: z.infer<typeof registryItemFileSchema>) => {
   const registryType = type.split(":")[1];
-  return path.replace(
-    registryType,
-    components.aliases[registryType as keyof typeof components.aliases],
-  );
+  if (registryType === "ui") {
+    return path.replace("ui", components.aliases.ui);
+  } else if (registryType === "hook") {
+    return path.replace("hooks", components.aliases.hooks);
+  } else {
+    throw new Error(`Unknown registry type: ${type}`);
+  }
 };
 
 export const transformComponentSource = (code: string) => {
