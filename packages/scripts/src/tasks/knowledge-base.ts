@@ -1,6 +1,6 @@
 import { promisify } from "util";
 import { gzip } from "zlib";
-import { Pinecone } from "@pinecone-database/pinecone";
+import { Pinecone, RecordMetadata } from "@pinecone-database/pinecone";
 import { Resource } from "sst";
 import { z } from "zod";
 
@@ -21,6 +21,8 @@ import {
 const pc = new Pinecone({
   apiKey: Resource.PineconeAPIKey.value,
 });
+const index = pc.index("shadcn");
+const gzipAsync = promisify(gzip);
 
 const [components, examples] = await Promise.all([
   resolveComponents(),
@@ -30,15 +32,14 @@ const [components, examples] = await Promise.all([
 for (const item of [...examples, ...components]) {
   console.time(`Process "${item.id}"`);
   const embedding = await generateEmbedding(item.content.slice(0, 8192));
-  const compressedContent = await promisify(gzip)(item.content);
-  const index = pc.index("shadcn");
-  const namespace = index.namespace("default");
+  const compressedContent = await gzipAsync(item.content);
+  const namespace = index.namespace(item.metadata.type);
   await namespace.upsert([
     {
       id: item.id,
       values: embedding,
       metadata: {
-        ...item.metadata,
+        ...(item.metadata as RecordMetadata),
         content: compressedContent.toString("base64"),
       },
     },
@@ -79,7 +80,7 @@ async function resolveComponentDocumentation(name: string) {
     ].join("\n\n"),
     metadata: {
       name: name,
-      type: "component",
+      type: "component" as const,
     },
   };
 }
@@ -124,7 +125,7 @@ async function resolveExample({
     id: `${formattedType}:${name}`,
     metadata: {
       name: name,
-      type: formattedType,
+      type: formattedType as "block" | "example",
       category: category,
       subcategory: subcategory,
       registryDependencies: registryDependencies,
