@@ -4,6 +4,7 @@ import { handle } from "hono/aws-lambda";
 import { HTTPException } from "hono/http-exception";
 
 import { Actor } from "@project-4/core/actor";
+import { Artifact } from "@project-4/core/artifact/index";
 import { Chat } from "@project-4/core/chat/index";
 import { createPool } from "@project-4/core/db/pool";
 import { APIError } from "@project-4/core/error";
@@ -52,6 +53,10 @@ const app = new Hono()
       return c.json(await Message.create(c.req.valid("json")));
     },
   )
+  .get("/components/:id/json", async (c) => {
+    const content = await Artifact.get(c.req.param("id"));
+    return c.json(content);
+  })
   .onError((error, c) => {
     console.error(error);
     if (error instanceof APIError || error instanceof HTTPException) {
