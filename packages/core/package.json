@@ -26,6 +26,7 @@
     "drizzle-zod": "^0.5.1",
     "nanoid": "^5.0.7",
     "openai": "^4.63.0",
+    "partial-json": "^0.1.7",
     "sst": "catalog:",
     "ws": "^8.18.0",
     "zod": "catalog:"

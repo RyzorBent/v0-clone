@@ -1,15 +1,17 @@
-import { nanoid } from "nanoid";
 import OpenAI from "openai";
-import { zodFunction } from "openai/helpers/zod";
 import { Resource } from "sst";
-import { z } from "zod";
 
 import { Chat } from "../chat";
 import { Message } from "../messages";
 import { Realtime } from "../realtime";
-import blocks from "./blocks.json";
-import components from "./components.json";
-import * as Prompt from "./prompt";
+import { ComponentContext, retrieveComponentContext } from "./context";
+import { Prompt } from "./prompt";
+import {
+  ComponentFunction,
+  refineQuery,
+  RefineQueryOutputChunk,
+  ToolCall,
+} from "./refine-query";
 
 export namespace AI {
   const openai = new OpenAI({
@@ -27,7 +29,6 @@ export namespace AI {
       ],
       stream: true,
     });
-
     let title = "";
     for await (const chunk of completion) {
       title += chunk.choices[0].delta.content ?? "";
@@ -40,197 +41,184 @@ export namespace AI {
     chatId: string,
     messages: Message[],
   ) {
-    const completion = await generateChatCompletion([
-      {
-        role: "system",
-        content: Prompt.generateReply,
-      },
-      ...messages.map(toChatCompletionMessage),
-    ]);
+    const refinedQuery = await handleRefineQuery(chatId, messages);
 
-    const responseMessages: Message[] = [];
+    if (!refinedQuery) {
+      return;
+    }
 
-    return await completion.pipeTo(
-      new WritableStream({
-        write: async (chunk) => {
-          const index = responseMessages.length - 1;
-
-          if (
-            index >= 0 &&
-            chunk.message.role === responseMessages[index].role
-          ) {
-            Object.assign(responseMessages[index], chunk.message);
-            if (chunk.type === "save") {
-              await Message.patch(responseMessages[index]);
-            } else {
-              await Realtime.onMessageChanged(responseMessages[index]);
-            }
-          } else {
-            const message = await Message.create({
-              id: nanoid(),
-              chatId,
-              role: chunk.message.role,
-              content: chunk.message.content,
-              toolCalls: chunk.message.toolCalls,
-              toolCallId: chunk.message.toolCallId,
-            });
-            responseMessages.push(message);
-          }
+    const [completion] = await Promise.all([
+      openai.chat.completions.create({
+        model: "gpt-4o-mini",
+        messages: [
+          {
+            role: "system",
+            content: Prompt.generateComponent({
+              query: refinedQuery.query,
+              componentsContext: refinedQuery.context.components
+                .map(
+                  (c) =>
+                    `<component relevance="${c.score}">${c.content}</component>`,
+                )
+                .join("\n"),
+              blocksContext: refinedQuery.context.blocks
+                .map(
+                  (b) => `<block relevance="${b.score}">${b.content}</block>`,
+                )
+                .join("\n"),
+            }),
+          },
+        ],
+        stream: true,
+      }),
+      Message.patch({
+        ...refinedQuery.message,
+        metadata: {
+          status: "generating-component",
         },
       }),
-    );
-  }
-
-  async function generateChatCompletion(
-    messages: OpenAI.Chat.Completions.ChatCompletionMessageParam[],
-  ) {
-    const completion = openai.beta.chat.completions.runTools({
-      model: "gpt-4o-mini",
-      messages,
-      tools: [
-        zodFunction({
-          name: "plan-component-generation",
-          description:
-            "Before generating a component, please explain how you intend to implement the user's request. If you name a block or any components, the system will include them in the generation context for your reference.",
-          parameters: z.object({
-            reasoning: z
-              .string()
-              .describe(
-                "Think from a design and implementation perspective about what the user wants to build and how you can implement it.",
-              ),
-            block: z
-              .string()
-              .optional()
-              .describe(
-                "If the user's request is similar to one of the given blocks, please provide the name of the block.",
-              ),
-            components: z
-              .array(z.string())
-              .describe(
-                "If you plan to use shadcn/ui components, list them here.",
-              ),
-            description: z
-              .string()
-              .describe(
-                "Describe how you plan to implement the user's request.",
-              ),
-          }),
-          function: getShadcnContext,
-        }),
-      ],
-      stream: true,
-      stream_options: {
-        include_usage: true,
-      },
-    });
-    await new Promise<void>((resolve, reject) => {
-      completion.once("connect", () => {
-        resolve();
-        completion.off("error", reject);
-      });
-      completion.once("error", reject);
-    });
-    return new ReadableStream<
-      | {
-          type: "partial";
-          message: Pick<
-            Message,
-            "role" | "content" | "toolCalls" | "toolCallId"
-          >;
-        }
-      | {
-          type: "save";
-          message: Pick<
-            Message,
-            "role" | "content" | "toolCalls" | "toolCallId"
-          >;
-        }
-    >({
-      start(controller) {
-        completion.on("content", (_, snapshot) => {
-          controller.enqueue({
-            type: "partial",
-            message: {
-              role: "assistant",
-              content: snapshot,
-              toolCalls: null,
-              toolCallId: null,
-            },
-          });
-        });
-        completion.on("message", (message) => {
-          controller.enqueue({
-            type: "save",
-            message: {
-              role: message.role as "user" | "assistant" | "tool",
-              content:
-                typeof message.content === "string" ? message.content : null,
-              toolCalls:
-                "tool_calls" in message &&
-                message.tool_calls &&
-                message.tool_calls.length > 0
-                  ? message.tool_calls
-                  : null,
-              toolCallId:
-                "tool_call_id" in message ? message.tool_call_id : null,
-            },
-          });
-        });
-        completion.on("end", () => {
+    ]);
+    const iterator = completion[Symbol.asyncIterator]();
+    const readable = new ReadableStream<string>({
+      pull: async (controller) => {
+        const { value, done } = await iterator.next();
+        if (done) {
           controller.close();
+        } else {
+          if (value.choices[0].delta.content) {
+            controller.enqueue(value.choices[0].delta.content);
+          }
+        }
+      },
+    });
+
+    let responseMessage: Message;
+    let lastSentAt = 0;
+    const times: { time: number; delay: number; sent: boolean }[] = [];
+    const writable = new WritableStream<string>({
+      start: async () => {
+        responseMessage = await Message.create({
+          chatId,
+          role: "assistant",
+          content: "",
+          context: refinedQuery.context,
         });
-        completion.on("error", (error) => {
-          controller.error(error);
+      },
+      write: async (content) => {
+        responseMessage.content += content;
+
+        const now = Date.now();
+        const randomDelay = Math.floor(Math.random() * (100 - 50 + 1)) + 50;
+
+        if (now - lastSentAt > randomDelay) {
+          times.push({
+            time: now - lastSentAt,
+            delay: randomDelay,
+            sent: true,
+          });
+          lastSentAt = now;
+          await Realtime.onMessageChanged(responseMessage);
+        } else {
+          times.push({
+            time: now - lastSentAt,
+            delay: randomDelay,
+            sent: false,
+          });
+        }
+      },
+      close: async () => {
+        await Message.patch(responseMessage);
+        console.log({
+          sent: times.filter((t) => t.sent).length,
+          skipped: times.filter((t) => !t.sent).length,
+          averageDelay:
+            times.reduce((acc, t) => acc + t.delay, 0) / times.length,
         });
       },
     });
+    await readable.pipeTo(writable);
   }
 
-  function toChatCompletionMessage(
-    message: Message,
-  ): OpenAI.Chat.Completions.ChatCompletionMessageParam {
-    return {
-      role: message.role,
-      content: message.content,
-      tool_call_id: message.toolCallId,
-      tool_calls: message.toolCalls,
-    } as OpenAI.Chat.Completions.ChatCompletionMessageParam;
-  }
+  export async function handleRefineQuery(
+    chatId: string,
+    messages: Message[],
+  ): Promise<{
+    query: string;
+    context: ComponentContext;
+    message: Message;
+  } | null> {
+    const [result, message] = await Promise.all([
+      refineQuery(messages),
+      Message.create({
+        chatId,
+        role: "assistant",
+        metadata: {
+          status: "thinking",
+        },
+      }),
+    ]);
 
-  function getShadcnContext(input: { components: string[]; block?: string }) {
-    const componentDocumentation = components
-      .filter((component) => input.components.includes(component.name))
-      .map(
-        (component) =>
-          `<Component name="${component.name}">\n${component.examples
-            .slice(0, 1)
-            .map(
-              (example) =>
-                `<Example name="${example.name}" description="${example.description}">\n${example.content}\n</Example>`,
-            )
-            .join(", ")}\n</Component>`,
+    let partialComponentQuery: ToolCall<ComponentFunction> | null = null;
+    let completedComponentQuery: {
+      query: string;
+      context: ComponentContext;
+      message: Message;
+    } | null = null;
+
+    await result
+      .pipeThrough(
+        new TransformStream<RefineQueryOutputChunk, Message>({
+          async transform(chunk, controller) {
+            switch (chunk.function.name) {
+              case "reply":
+                message.content = chunk.function.parsedArguments.message;
+                if (message.content) {
+                  message.metadata = null;
+                }
+                break;
+              case "refine-component-query":
+                partialComponentQuery = chunk as ToolCall<ComponentFunction>;
+                message.toolCalls = [partialComponentQuery];
+                message.metadata = {
+                  status: "planning",
+                };
+                break;
+            }
+            controller.enqueue(message);
+          },
+        }),
+      )
+      .pipeTo(
+        new WritableStream({
+          write: async (message) => {
+            await Realtime.onMessageChanged(message);
+          },
+          close: async () => {
+            if (partialComponentQuery) {
+              const [context] = await Promise.all([
+                retrieveComponentContext(
+                  partialComponentQuery.function.parsedArguments.refinedQuery,
+                ),
+                Message.patch({
+                  ...message,
+                  toolCalls: [partialComponentQuery],
+                  metadata: {
+                    status: "retrieving-context",
+                  },
+                }),
+              ]);
+              completedComponentQuery = {
+                query:
+                  partialComponentQuery.function.parsedArguments.refinedQuery,
+                context,
+                message,
+              };
+            } else {
+              await Message.patch(message);
+            }
+          },
+        }),
       );
-    const blockDocumentation = blocks
-      .filter((block) => block.name === input.block)
-      .map(
-        (block) =>
-          `<Block name="${block.name}" description="${block.description}">\n${block.content}\n</Block>`,
-      );
-
-    if (
-      componentDocumentation.length === 0 &&
-      blockDocumentation.length === 0
-    ) {
-      return "No component or block documentation found.";
-    }
-
-    let response = "";
-    if (componentDocumentation.length > 0) {
-      response += `Components:\n${componentDocumentation.join("\n")}`;
-    }
-    if (blockDocumentation.length > 0) {
-      response += `\n\nBlock:\n${blockDocumentation[0]}`;
-    }
-    return response;
+    return completedComponentQuery;
   }
 }

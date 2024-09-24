@@ -1,5 +1,5 @@
 import { SendMessageCommand, SQSClient } from "@aws-sdk/client-sqs";
-import { asc, eq } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 import { nanoid } from "nanoid";
 import { Resource } from "sst";
@@ -18,6 +18,34 @@ export namespace Message {
   const sqs = new SQSClient({});
 
   export const Insert = createInsertSchema(messages, {
+    metadata: z
+      .object({
+        status: z.enum([
+          "thinking",
+          "planning",
+          "retrieving-context",
+          "generating-component",
+        ]),
+      })
+      .nullish(),
+    context: z
+      .object({
+        components: z.array(
+          z.object({
+            id: z.string(),
+            content: z.string(),
+            score: z.number().optional(),
+          }),
+        ),
+        blocks: z.array(
+          z.object({
+            id: z.string(),
+            content: z.string(),
+            score: z.number().optional(),
+          }),
+        ),
+      })
+      .nullish(),
     createdAt: z.coerce.date(),
     toolCalls: z.array(z.unknown()).nullish(),
   });
@@ -28,6 +56,8 @@ export namespace Message {
       input: z.object({
         actor: z.object({ type: z.literal("user"), userId: z.string() }),
         message: createSelectSchema(messages, {
+          context: z.null(),
+          metadata: z.null(),
           createdAt: z.coerce.date(),
           toolCalls: z.array(z.unknown()).nullable(),
         }),
@@ -37,15 +67,17 @@ export namespace Message {
 
   export async function list(chatId: string) {
     return await withTransaction(async (tx) => {
-      const [rows] = await Promise.all([
-        tx
-          .select()
-          .from(messages)
-          .where(eq(messages.chatId, chatId))
-          .orderBy(asc(messages.createdAt)),
+      const [messages] = await Promise.all([
+        tx.query.messages.findMany({
+          columns: {
+            context: false,
+          },
+          where: (messages, { eq }) => eq(messages.chatId, chatId),
+          orderBy: (messages, { asc }) => asc(messages.createdAt),
+        }),
         authorizeRead(chatId),
       ]);
-      return rows;
+      return messages;
     });
   }
 
@@ -58,6 +90,8 @@ export namespace Message {
       toolCallId: input.toolCallId ?? null,
       toolCalls: input.toolCalls ?? null,
       createdAt: input.createdAt ?? new Date(),
+      context: input.context ?? null,
+      metadata: input.metadata ?? null,
     };
     await withTransaction(
       async (tx) =>

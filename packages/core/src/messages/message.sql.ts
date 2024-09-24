@@ -16,6 +16,17 @@ export const messages = defineTable("messages", {
   content: text("content"),
   toolCallId: varchar("tool_call_id", { length: 255 }),
   toolCalls: jsonb("tool_calls").$type<unknown[]>(),
+  context: jsonb("context").$type<{
+    components: { id: string; content: string; score?: number }[];
+    blocks: { id: string; content: string; score?: number }[];
+  }>(),
+  metadata: jsonb("metadata").$type<{
+    status:
+      | "thinking"
+      | "planning"
+      | "retrieving-context"
+      | "generating-component";
+  }>(),
   chatId: column
     .nanoid("chat_id")
     .references(() => chats.id, { onDelete: "cascade" })
