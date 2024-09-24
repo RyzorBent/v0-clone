@@ -152,7 +152,7 @@ function MessageItem({ id }: { id: string }) {
     <div className="mx-auto flex w-full max-w-prose flex-row gap-3 px-4 py-3">
       <div className="flex gap-2">
         <Avatar className="border">
-          <AvatarFallback className="text-sm text-muted-foreground">
+          <AvatarFallback className="text-xs font-medium text-muted-foreground">
             {item.message.role === "user" ? "You" : "v0"}
           </AvatarFallback>
         </Avatar>
