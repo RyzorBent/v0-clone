@@ -31,7 +31,7 @@ export async function generateFileDescription(
   return await withCache(
     async () => {
       const response = await openai.chat.completions.create({
-        model: "gpt-4o",
+        model: "gpt-4o-mini",
         messages: [
           {
             role: "system",

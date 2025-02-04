@@ -14,6 +14,7 @@ export const internalRegistryItemSchema = z.object({
     "registry:hook",
     "registry:theme",
     "registry:page",
+    "registry:internal",
   ]),
   registryDependencies: z
     .array(z.string())
@@ -21,7 +22,20 @@ export const internalRegistryItemSchema = z.object({
     .transform((files) =>
       Array.isArray(files) && files.length > 0 ? files : undefined,
     ),
-  files: z.array(z.string()),
+  files: z.array(
+    z.object({
+      path: z.string(),
+      type: z.enum([
+        "registry:ui",
+        "registry:component",
+        "registry:page",
+        "registry:block",
+        "registry:example",
+        "registry:internal",
+        "registry:hook",
+      ]),
+    }),
+  ),
   source: z.string(),
   category: z.preprocess(
     (val) => (val === "undefined" ? undefined : val),
@@ -31,12 +45,14 @@ export const internalRegistryItemSchema = z.object({
     (val) => (val === "undefined" ? undefined : val),
     z.string().optional(),
   ),
-  chunks: z.array(
-    z.object({
-      name: z.string(),
-      description: z.string(),
-      file: z.string(),
-    }),
+  chunks: z.optional(
+    z.array(
+      z.object({
+        name: z.string(),
+        description: z.string(),
+        file: z.string(),
+      }),
+    ),
   ),
 });
 

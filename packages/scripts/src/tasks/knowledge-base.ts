@@ -107,13 +107,13 @@ async function resolveExample({
   type,
 }: z.infer<typeof internalRegistryItemSchema>) {
   const filesExcludingChunks = files.filter(
-    (file) => !chunks.some((chunk) => chunk.file === file),
+    (file) => !chunks?.some((chunk) => chunk.file === file.path),
   );
   const resolvedFiles = await Promise.all(
-    filesExcludingChunks.map((file) => resolveBlockFile(file)),
+    filesExcludingChunks.map((file) => resolveBlockFile(file.path)),
   );
   const resolvedChunks = await Promise.all(
-    chunks.map((chunk) => resolveBlockChunk(chunk)),
+    chunks?.map((chunk) => resolveBlockChunk(chunk)) ?? [],
   );
   const formattedFiles = [...resolvedFiles, ...resolvedChunks]
     .map(formatFile)
