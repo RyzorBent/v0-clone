@@ -1,5 +1,4 @@
 import { api } from "./api";
-import { dns } from "./dns";
 import { realtime } from "./realtime";
 import { secrets } from "./secrets";
 
@@ -12,13 +11,6 @@ export const web = new sst.aws.StaticSite("Web", {
   dev: {
     url: "http://localhost:5173",
   },
-  domain:
-    $app.stage === "production"
-      ? {
-          name: "v0.headstarter.tech",
-          dns,
-        }
-      : undefined,
   environment: {
     VITE_CLERK_PUBLISHABLE_KEY: secrets.ClerkPublishableKey.value,
     VITE_API_URL: api.url,

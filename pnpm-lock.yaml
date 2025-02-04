@@ -13,8 +13,8 @@ catalogs:
       specifier: ^3.3.3
       version: 3.3.3
     sst:
-      specifier: ^3.1.30
-      version: 3.1.30
+      specifier: ^3.7.7
+      version: 3.7.7
     typescript:
       specifier: ^5.6.2
       version: 5.6.2
@@ -28,7 +28,7 @@ importers:
     devDependencies:
       sst:
         specifier: 'catalog:'
-        version: 3.1.30(hono@4.6.2)
+        version: 3.7.7
       typescript:
         specifier: 'catalog:'
         version: 5.6.2
@@ -99,7 +99,7 @@ importers:
         version: 0.1.7
       sst:
         specifier: 'catalog:'
-        version: 3.1.30(hono@4.6.2)
+        version: 3.7.7
       ws:
         specifier: ^8.18.0
         version: 8.18.0
@@ -206,7 +206,7 @@ importers:
         version: 3.3.3
       sst:
         specifier: 'catalog:'
-        version: 3.1.30(hono@4.6.2)
+        version: 3.7.7
       tsx:
         specifier: ^4.19.1
         version: 4.19.1
@@ -3819,42 +3819,34 @@ packages:
     resolution: {integrity: sha512-UcjcJOWknrNkF6PLX83qcHM6KHgVKNkV62Y8a5uYDVv9ydGQVwAHMKqHdJje1VTWpljG0WYpCDhrCdAOYH4TWg==}
     engines: {node: '>= 10.x'}
 
-  sst-darwin-arm64@3.1.30:
-    resolution: {integrity: sha512-1Ix+17aVY0O0B+S1jN+cGeo+I2V/z67NeDk+MDx0nidYOTRN7tQ7KnY1iV0CLvI3ZeCrR7LepBDLuxUsvu6vJA==}
+  sst-darwin-arm64@3.7.7:
+    resolution: {integrity: sha512-G9GCF5YLVnJZdehr1S/7c4L177ZJEtU1ChpV6Aub2XswTQaM7BcDHlorWFK/Dcxko2FA3FuZZB+gfd/ZVLTYeA==}
     cpu: [arm64]
     os: [darwin]
 
-  sst-darwin-x64@3.1.30:
-    resolution: {integrity: sha512-esodwkLFPj++sEIai5PHdP29x2c4o8ovYETgA8peQK5AFZ2qR4Bg3MyciKqHR+3Zr/GRoibH/EZft8PuQ2aLYQ==}
+  sst-darwin-x64@3.7.7:
+    resolution: {integrity: sha512-r6dZgPwMtuR/qErSc09trQ9EJHF1InY0EL6tSPcBEnuc4c+d7z/QF2ps62tFgzUsSbqmKX63jB29JKg0eq5NEA==}
     cpu: [x64]
     os: [darwin]
 
-  sst-linux-arm64@3.1.30:
-    resolution: {integrity: sha512-UyrL7kg9JOfnwdXHLELFqHDdR+aDCxD5DWHTvkuf/ZwGKatWrDEb8qUHCxbOb3ta3O5y6UZEk7SS4PsXpoC+yA==}
+  sst-linux-arm64@3.7.7:
+    resolution: {integrity: sha512-CSlfoUQjuxlR+mfBpjTl6VlKXspN1zCGqUqw27sbzrXg/U0wYRlf2jhfKVoNOQbWiZaDPVLafOhVCodNpT/3GQ==}
     cpu: [arm64]
     os: [linux]
 
-  sst-linux-x64@3.1.30:
-    resolution: {integrity: sha512-lH0Waxw5uyIulKInKN8L3p8aUrJesC4GcHT62fFobDL7xOVXR+TQr1z07UFT2rEiF+lmFBjvsmwWltXme5G3AA==}
+  sst-linux-x64@3.7.7:
+    resolution: {integrity: sha512-/3Ktm48orrI3PahT4wxkA5e9o53RdgoA9U5bVRKa+B9nxROr4YYRpdjZ21ayidDTmI8BhGR7ENRx4Nj40ENuJA==}
     cpu: [x64]
     os: [linux]
 
-  sst-linux-x86@3.1.30:
-    resolution: {integrity: sha512-VB+aq9pXE1LLTJhq3WyZk3VMsHaaVe1onDYCj986g8wFvhCIlDjBaY3QLlgZif/IWXNYBLjGnz63bIxkxLAUHQ==}
+  sst-linux-x86@3.7.7:
+    resolution: {integrity: sha512-CaWa6dUQuwwTliy8O3Ld/3lSRwqr+VLkkaVgfWEf7Jb4NHQ7WB/Xsq960zPoi7lk8x8bAhjyAvhQvEMOz0IFdg==}
     cpu: [x86]
     os: [linux]
 
-  sst@3.1.30:
-    resolution: {integrity: sha512-wT2fdAlTAUTHy6xGq8PWzS/1l1CtNulyxl321bc9QkYW9V4x2t1bFin6zBOTR+9e3fvsczxYsbBl+hRmsQoMHA==}
+  sst@3.7.7:
+    resolution: {integrity: sha512-olCJHSgCp0S5mB3bBrpA2Ha+4IIBmWjhxFY/cCCNSNwTAiqPJNhfAWejg4nZqQGRRWa8hiCXvofByb2yhOkh6Q==}
     hasBin: true
-    peerDependencies:
-      hono: 4.x
-      valibot: 0.30.x
-    peerDependenciesMeta:
-      hono:
-        optional: true
-      valibot:
-        optional: true
 
   static-browser-server@1.0.3:
     resolution: {integrity: sha512-ZUyfgGDdFRbZGGJQ1YhiM930Yczz5VlbJObrQLlk24+qNHVQx4OlLcYswEUo3bIyNAbQUIUR9Yr5/Hqjzqb4zA==}
@@ -8102,33 +8094,32 @@ snapshots:
 
   split2@4.2.0: {}
 
-  sst-darwin-arm64@3.1.30:
+  sst-darwin-arm64@3.7.7:
     optional: true
 
-  sst-darwin-x64@3.1.30:
+  sst-darwin-x64@3.7.7:
     optional: true
 
-  sst-linux-arm64@3.1.30:
+  sst-linux-arm64@3.7.7:
     optional: true
 
-  sst-linux-x64@3.1.30:
+  sst-linux-x64@3.7.7:
     optional: true
 
-  sst-linux-x86@3.1.30:
+  sst-linux-x86@3.7.7:
     optional: true
 
-  sst@3.1.30(hono@4.6.2):
+  sst@3.7.7:
     dependencies:
       aws4fetch: 1.0.20
       jose: 5.2.3
       openid-client: 5.6.4
     optionalDependencies:
-      hono: 4.6.2
-      sst-darwin-arm64: 3.1.30
-      sst-darwin-x64: 3.1.30
-      sst-linux-arm64: 3.1.30
-      sst-linux-x64: 3.1.30
-      sst-linux-x86: 3.1.30
+      sst-darwin-arm64: 3.7.7
+      sst-darwin-x64: 3.7.7
+      sst-linux-arm64: 3.7.7
+      sst-linux-x64: 3.7.7
+      sst-linux-x86: 3.7.7
 
   static-browser-server@1.0.3:
     dependencies:
