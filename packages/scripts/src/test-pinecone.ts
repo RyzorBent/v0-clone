@@ -2,13 +2,14 @@ import { promisify } from "util";
 import { gunzip } from "zlib";
 import { Pinecone } from "@pinecone-database/pinecone";
 import { Resource } from "sst";
+import { secrets } from "../../../infra/secrets";
 
 import { generateEmbedding } from "./api/openai";
 
 const gunzipAsync = promisify(gunzip);
 
 const pc = new Pinecone({
-  apiKey: Resource.PineconeAPIKey.value,
+  apiKey: secrets.PineconeAPIKey.value,
 });
 
 const index = pc.index("shadcn");

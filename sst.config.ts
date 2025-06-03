@@ -5,7 +5,12 @@ export default $config({
     return {
       name: "project-4-v0",
       removal: "remove",
-      home: "aws",
+      home: "local",
+      mode: "local",
+      dev: {
+        deploy: false,
+        live: true
+      }
     };
   },
   console: {

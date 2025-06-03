@@ -3,12 +3,13 @@ import { gunzip } from "zlib";
 import { Pinecone, QueryResponse } from "@pinecone-database/pinecone";
 import { OpenAI } from "openai";
 import { Resource } from "sst";
+import { secrets } from "../../../../infra/secrets";
 
 const openai = new OpenAI({
-  apiKey: Resource.OpenAIAPIKey.value,
+  apiKey: secrets.OpenAIAPIKey.value,
 });
 const pinecone = new Pinecone({
-  apiKey: Resource.PineconeAPIKey.value,
+  apiKey: secrets.PineconeAPIKey.value,
 });
 const shadcnIndex = pinecone.index("shadcn");
 const gunzipPromise = promisify(gunzip);

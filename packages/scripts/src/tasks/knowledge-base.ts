@@ -17,9 +17,10 @@ import {
   transformComponentSource,
   transformRegistrySource,
 } from "../helpers/transform";
+import { secrets } from "../../../../infra/secrets";
 
 const pc = new Pinecone({
-  apiKey: Resource.PineconeAPIKey.value,
+  apiKey: secrets.PineconeAPIKey.value,
 });
 const index = pc.index("shadcn");
 const gzipAsync = promisify(gzip);
