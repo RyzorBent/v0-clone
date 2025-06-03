@@ -15,8 +15,14 @@
     "remove": "sst remove"
   },
   "devDependencies": {
-    "sst": "catalog:",
+    "@tsconfig/node18": "^18.2.4",
+    "@types/node": "^20.16.5",
+    "pulumi": "^0.0.1",
+    "sst": "^3.17.0",
     "sst-win32-x64": "^3.17.0",
     "typescript": "catalog:"
+  },
+  "dependencies": {
+    "aws4fetch": "^1.0.20"
   }
 }

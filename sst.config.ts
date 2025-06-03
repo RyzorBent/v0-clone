@@ -1,16 +1,20 @@
 /// <reference path="./.sst/platform/config.d.ts" />
-
 export default $config({
   app(input) {
+    const stage = input.stage ?? "dev";
     return {
       name: "project-4-v0",
-      removal: "remove",
-      home: "local",
-      mode: "local",
+      stage,
+      removal: "retain",
+      region: "us-east-1",
+      home: "aws",
       dev: {
-        deploy: false,
-        live: true
-      }
+        deploy: true,
+        live: true,
+        // Increase timeouts for Windows
+        deployTimeout: 60 * 5, // 5 minutes
+      },
+      providers: { aws: "6.81.0" },
     };
   },
   console: {
@@ -38,7 +42,6 @@ export default $config({
     await import("./infra/queue");
     const { api } = await import("./infra/api");
     const { web } = await import("./infra/web");
-
     return {
       api: api.url,
       web: web.url,

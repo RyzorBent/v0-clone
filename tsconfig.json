@@ -1,1 +1,18 @@
-{}
+{
+  "extends": "@tsconfig/node18/tsconfig.json",
+  "compilerOptions": {
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "allowJs": true,
+    "resolveJsonModule": true,
+    "types": ["node"],
+    "strict": false,
+    "isolatedModules": true,
+    "baseUrl": ".",
+    "paths": {
+      "sst": ["node_modules/sst"],
+      "@sst/*": ["node_modules/@sst/*"]
+    }
+  },
+  "include": ["sst.config.ts", ".sst/types/*"]
+}

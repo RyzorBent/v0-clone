@@ -5,9 +5,29 @@
 
 declare module "sst" {
   export interface Resource {
-    "Web": {
-      "type": "sst.aws.StaticSite"
+    "ClerkIssuer": {
+      "type": "sst.sst.Secret"
+      "value": string
+    }
+    "ClerkPublishableKey": {
+      "type": "sst.sst.Secret"
+      "value": string
+    }
+    "DatabaseURL": {
+      "type": "sst.sst.Secret"
+      "value": string
+    }
+    "GenerateMessageResponseQueue": {
+      "type": "sst.aws.Queue"
       "url": string
+    }
+    "OpenAIAPIKey": {
+      "type": "sst.sst.Secret"
+      "value": string
+    }
+    "PineconeAPIKey": {
+      "type": "sst.sst.Secret"
+      "value": string
     }
   }
 }
