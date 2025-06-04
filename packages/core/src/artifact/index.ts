@@ -1,5 +1,7 @@
-import { withTransaction } from "../db/transaction";
-import { APIError } from "../error";
+import { and, eq, SQL } from "drizzle-orm";
+import { messages } from "../messages/message.sql.js";
+import { withTransaction } from "../db/transaction.js";
+import { APIError } from "../error.js";
 
 export namespace Artifact {
   export async function get(id: string) {
@@ -9,8 +11,11 @@ export namespace Artifact {
           columns: {
             content: true,
           },
-          where: (message, { and, eq }) =>
-            and(eq(message.id, id), eq(message.role, "assistant")),
+          where: (msgs: typeof messages, ops: { and: typeof and, eq: typeof eq }): SQL<unknown> =>
+            and(
+              eq(msgs.id, id),
+              eq(msgs.role, "assistant")
+            ) as SQL<unknown>,
         }),
     );
     if (!message || !message.content) {
@@ -27,16 +32,32 @@ export namespace Artifact {
     const { dependencies, registryDependencies, content } = transformContent(
       artifact.content,
     );
+    // Map artifact.type to RegistryItemType if possible, fallback to 'registry:block'
+    const registryType =
+      [
+        "style",
+        "lib",
+        "example",
+        "block",
+        "component",
+        "ui",
+        "hook",
+        "theme",
+        "page",
+      ].includes(artifact.type)
+        ? ("registry:" + artifact.type) as RegistryItemType
+        : ("registry:block" as RegistryItemType);
+
     return {
       name: artifact.title,
-      type: "registry:block",
+      type: registryType,
       dependencies,
       registryDependencies,
       files: [
         {
           path: `${artifact.identifier}.${artifact.type}`,
           content,
-          type: "registry:component",
+          type: registryType,
         },
       ],
     };
