@@ -15,14 +15,20 @@
     "remove": "sst remove"
   },
   "devDependencies": {
+    "@serverless-stack/resources": "^1.18.4",
     "@tsconfig/node18": "^18.2.4",
     "@types/node": "^20.16.5",
-    "pulumi": "^0.0.1",
+    "aws-cdk-lib": "^2.200.1",
     "sst": "^3.17.0",
     "sst-win32-x64": "^3.17.0",
     "typescript": "catalog:"
   },
   "dependencies": {
-    "aws4fetch": "^1.0.20"
+    "abort-controller": "^3.0.0",
+    "agentkeepalive": "^4.6.0",
+    "aws4fetch": "^1.0.20",
+    "form-data-encoder": "^4.0.2",
+    "formdata-node": "^6.0.3",
+    "node-fetch": "^3.3.2"
   }
 }

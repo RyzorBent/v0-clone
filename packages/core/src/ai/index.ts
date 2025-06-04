@@ -1,17 +1,17 @@
 import OpenAI from "openai";
 import { Resource } from "sst";
 
-import { Chat } from "../chat";
-import { Message } from "../messages";
-import { Realtime } from "../realtime";
-import { ComponentContext, retrieveComponentContext } from "./context";
-import { Prompt } from "./prompt";
+import { Chat } from "../chat/index.js";
+import { Message } from "../messages/index.js";
+import { Realtime } from "../realtime.js";
+import { ComponentContext, retrieveComponentContext } from "./context.js";
+import { Prompt } from "./prompt.js";
 import {
   ComponentFunction,
   refineQuery,
   RefineQueryOutputChunk,
   ToolCall,
-} from "./refine-query";
+} from "./refine-query.js";
 
 export namespace AI {
   const openai = new OpenAI({

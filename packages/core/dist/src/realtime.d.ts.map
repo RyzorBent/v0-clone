@@ -1,0 +1,1 @@
+{"version":3,"file":"realtime.d.ts","sourceRoot":"","sources":["../../src/realtime.ts"],"names":[],"mappings":"AAMA,OAAO,KAAK,EAAE,OAAO,EAAE,MAAM,SAAS,CAAC;AAKvC,yBAAiB,QAAQ,CAAC;IACxB,SAAsB,cAAc,CAAC,MAAM,EAAE,MAAM,EAAE,KAAK,EAAE,MAAM,iBAUjE;IAED,SAAsB,gBAAgB,CAAC,EAAE,OAAO,EAAE,CAAC,EAAE,GAAG,OAAO,EAAE,EAAE,OAAO,iBAazE;CACF"}

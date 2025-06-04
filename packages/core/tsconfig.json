@@ -1,7 +1,21 @@
 {
   "extends": "@tsconfig/node20/tsconfig.json",
   "compilerOptions": {
-    "module": "Preserve",
-    "moduleResolution": "Bundler"
-  }
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "composite": true,
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "rootDir": ".",
+    "outDir": "dist",
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "strict": true,
+    "baseUrl": ".",
+    "paths": {
+      "@project-4-v0/core/*": ["src/*"]
+    }
+  },
+  "include": ["src/**/*", "src/**/*.json"]
 }

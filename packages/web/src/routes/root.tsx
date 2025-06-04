@@ -33,8 +33,21 @@ function ReduxEffects() {
   useEffect(() => {
     if (userId) {
       const populate = async () => {
-        const token = await getToken({ template: "lambda" });
+        // Request token with specific template ensuring userId is in sub claim
+        const token = await getToken({
+          template: "p4_template",
+        }).catch(async () => {
+          // Fallback to default token if template doesn't exist
+          console.log("Falling back to default JWT template");
+          return await getToken();
+        });
+
         if (token) {
+          console.log("Got token from Clerk", {
+            userId,
+            tokenLength: token.length,
+            tokenPrefix: token.substring(0, 20) + "...",
+          });
           dispatch(initialize({ token, userId }));
           dispatch(api.util.resetApiState());
         }

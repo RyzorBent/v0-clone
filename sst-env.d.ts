@@ -5,6 +5,11 @@
 
 declare module "sst" {
   export interface Resource {
+    "API": {
+      "name": string
+      "type": "sst.aws.Function"
+      "url": string
+    }
     "ClerkIssuer": {
       "type": "sst.sst.Secret"
       "value": string
@@ -28,6 +33,15 @@ declare module "sst" {
     "PineconeAPIKey": {
       "type": "sst.sst.Secret"
       "value": string
+    }
+    "Realtime": {
+      "authorizer": string
+      "endpoint": string
+      "type": "sst.aws.Realtime"
+    }
+    "Web": {
+      "type": "sst.aws.StaticSite"
+      "url": string
     }
   }
 }

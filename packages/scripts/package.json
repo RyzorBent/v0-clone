@@ -1,5 +1,5 @@
 {
-  "name": "@project-4/scripts",
+  "name": "@project-4-v0/scripts",
   "version": "0.1.0",
   "private": true,
   "type": "module",
@@ -13,9 +13,9 @@
   },
   "devDependencies": {
     "@pinecone-database/pinecone": "^3.0.3",
-    "@project-4/config-eslint": "workspace:^",
-    "@project-4/config-prettier": "workspace:^",
-    "@project-4/core": "workspace:^",
+    "@project-4-v0/config-eslint": "workspace:^",
+    "@project-4-v0/config-prettier": "workspace:^",
+    "@project-4-v0/core": "workspace:^",
     "@tsconfig/node20": "^20.1.4",
     "@types/node": "^20.16.5",
     "eslint": "catalog:",
@@ -25,5 +25,5 @@
     "tsx": "^4.19.1",
     "zod": "catalog:"
   },
-  "prettier": "@project-4/config-prettier"
+  "prettier": "@project-4-v0/config-prettier"
 }

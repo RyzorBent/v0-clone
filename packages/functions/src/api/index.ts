@@ -3,12 +3,12 @@ import { Hono } from "hono";
 import { handle } from "hono/aws-lambda";
 import { HTTPException } from "hono/http-exception";
 
-import { Actor } from "@project-4/core/actor";
-import { Artifact } from "@project-4/core/artifact/index";
-import { Chat } from "@project-4/core/chat/index";
-import { createPool } from "@project-4/core/db/pool";
-import { APIError } from "@project-4/core/error";
-import { Message } from "@project-4/core/messages/index";
+import { Actor } from "@project-4-v0/core/actor";
+import { Artifact } from "@project-4-v0/core/artifact/index";
+import { Chat } from "@project-4-v0/core/chat/index";
+import { createPool } from "@project-4-v0/core/db/pool";
+import { APIError } from "@project-4-v0/core/error";
+import { Message } from "@project-4-v0/core/messages/index";
 
 import { authorize } from "../authorize";
 

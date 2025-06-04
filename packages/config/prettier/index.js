@@ -6,7 +6,7 @@ const config = {
     "<THIRD_PARTY_MODULES>",
     "",
     "<TYPES>^@project-4",
-    "^@project-4/(.*)$",
+    "^@project-4-v0/(.*)$",
     "",
     "<TYPES>^[.|..|~]",
     "^~/",

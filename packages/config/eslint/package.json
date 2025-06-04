@@ -1,5 +1,5 @@
 {
-  "name": "@project-4/config-eslint",
+  "name": "@project-4-v0/config-eslint",
   "version": "0.0.0",
   "type": "module",
   "exports": {
@@ -13,7 +13,7 @@
     "typescript-eslint": "^8.6.0"
   },
   "devDependencies": {
-    "@project-4/config-prettier": "workspace:^",
+    "@project-4-v0/config-prettier": "workspace:^",
     "@types/eslint__js": "^8.42.3",
     "prettier": "catalog:",
     "typescript": "catalog:"
@@ -21,5 +21,5 @@
   "peerDependencies": {
     "eslint": "catalog:"
   },
-  "prettier": "@project-4/config-prettier"
+  "prettier": "@project-4-v0/config-prettier"
 }

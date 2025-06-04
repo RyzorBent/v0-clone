@@ -1,5 +1,5 @@
 {
-  "name": "web",
+  "name": "@project-4-v0/web",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -43,9 +43,9 @@
     "tailwindcss-animate": "^1.0.7"
   },
   "devDependencies": {
-    "@project-4/config-eslint": "workspace:*",
-    "@project-4/config-prettier": "workspace:*",
-    "@project-4/core": "workspace:^",
+    "@project-4-v0/config-eslint": "workspace:*",
+    "@project-4-v0/config-prettier": "workspace:*",
+    "@project-4-v0/core": "workspace:^",
     "@types/react": "^18.3.8",
     "@types/react-dom": "^18.3.0",
     "@types/react-syntax-highlighter": "^15.5.13",

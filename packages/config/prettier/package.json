@@ -1,5 +1,5 @@
 {
-  "name": "@project-4/config-prettier",
+  "name": "@project-4-v0/config-prettier",
   "version": "0.0.0",
   "scripts": {
     "clean": "git clean -xdf node_modules"

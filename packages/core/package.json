@@ -1,10 +1,35 @@
 {
-  "name": "@project-4/core",
+  "name": "@project-4-v0/core",
   "version": "0.1.0",
   "private": true,
   "type": "module",
+  "main": "./src/index.js",
+  "types": "./src/index.d.ts",
   "exports": {
-    "./*": "./src/*.ts"
+    "./actor": {
+      "types": "./src/actor.d.ts",
+      "import": "./src/actor.js"
+    },
+    "./ai": {
+      "types": "./src/ai/index.d.ts",
+      "import": "./src/ai/index.js"
+    },
+    "./chat": {
+      "types": "./src/chat/index.d.ts",
+      "import": "./src/chat/index.js"
+    },
+    "./db/pool": {
+      "types": "./src/db/pool.d.ts",
+      "import": "./src/db/pool.js"
+    },
+    "./error": {
+      "types": "./src/error.d.ts",
+      "import": "./src/error.js"
+    },
+    "./messages": {
+      "types": "./src/messages/index.d.ts",
+      "import": "./src/messages/index.js"
+    }
   },
   "scripts": {
     "clean": "git clean -xdf node_modules",
@@ -22,26 +47,32 @@
     "@aws-sdk/client-sqs": "^3.654.0",
     "@neondatabase/serverless": "^0.9.5",
     "@pinecone-database/pinecone": "^3.0.3",
+    "@project-4-v0/infra": "workspace:*",
+    "abort-controller": "~3.0.0",
+    "agentkeepalive": "~4.6.0",
     "drizzle-orm": "^0.33.0",
     "drizzle-zod": "^0.5.1",
+    "form-data-encoder": "~4.0.2",
+    "formdata-node": "~6.0.3",
     "nanoid": "^5.0.7",
+    "node-fetch": "~2.7.0",
     "openai": "^4.63.0",
     "partial-json": "^0.1.7",
-    "sst": "catalog:",
+    "sst": "^3.17.0",
     "ws": "^8.18.0",
-    "zod": "catalog:"
+    "zod": "^3.23.8"
   },
   "devDependencies": {
-    "@project-4/config-eslint": "workspace:^",
-    "@project-4/config-prettier": "workspace:^",
+    "@project-4-v0/config-eslint": "workspace:^",
+    "@project-4-v0/config-prettier": "workspace:^",
     "@tsconfig/node20": "^20.1.4",
     "@types/aws-lambda": "^8.10.145",
     "@types/node": "^20.16.5",
     "@types/ws": "^8.5.12",
     "drizzle-kit": "^0.24.2",
-    "eslint": "catalog:",
+    "eslint": "^8.57.0",
     "eslint-plugin-drizzle": "^0.2.3",
-    "prettier": "catalog:"
+    "prettier": "^3.2.5"
   },
-  "prettier": "@project-4/config-prettier"
+  "prettier": "@project-4-v0/config-prettier"
 }

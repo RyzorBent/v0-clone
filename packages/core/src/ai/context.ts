@@ -1,9 +1,9 @@
 import { promisify } from "util";
 import { gunzip } from "zlib";
-import { Pinecone, QueryResponse } from "@pinecone-database/pinecone";
+import { Pinecone } from "@pinecone-database/pinecone";
 import { OpenAI } from "openai";
 import { Resource } from "sst";
-import { secrets } from "../../../../infra/secrets";
+import { secrets } from "@project-4-v0/infra/secrets";
 
 const openai = new OpenAI({
   apiKey: secrets.OpenAIAPIKey.value,
@@ -51,7 +51,7 @@ export async function retrieveComponentContext(
   };
 }
 
-async function parseQueryResponse(response: QueryResponse) {
+async function parseQueryResponse(response: { matches: Array<{ id: string; score?: number; metadata?: Record<string, unknown> }> }) {
   const matches = await Promise.all(
     response.matches.map(async (match) => {
       const content = match.metadata?.content;

@@ -1,7 +1,15 @@
 {
   "extends": "@tsconfig/node20/tsconfig.json",
   "compilerOptions": {
-    "module": "Preserve",
-    "moduleResolution": "Bundler"
-  }
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "baseUrl": ".",
+    "rootDir": ".",
+    "paths": {
+      "@project-4-v0/core/*": ["../core/src/*"]
+    }
+  },
+  "references": [
+    { "path": "../core" }
+  ]
 }
