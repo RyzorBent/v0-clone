@@ -1,8 +1,8 @@
 import { relations } from "drizzle-orm";
 import { jsonb, pgEnum, text, timestamp, varchar } from "drizzle-orm/pg-core";
 
-import { chats } from "../chat/chat.sql";
-import { column, defineTable } from "../db/utils";
+import { chats } from "../chat/chat.sql.js";
+import { column, defineTable } from "../db/utils.js";
 
 export const messageRole = pgEnum("message_role", [
   "user",

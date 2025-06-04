@@ -27,16 +27,24 @@ export const handler = realtime.authorizer(async (token) => {
       subscribe: [topic],
     };
   } catch (error) {
+    const isAPIError = (e: unknown): e is APIError => {
+      return e instanceof APIError;
+    };
+
     console.error("Realtime authorization failed", { 
       error: error instanceof Error ? error.message : "Unknown error",
       token: token ? `${token.substring(0, 20)}...` : "none",
       time: new Date().toISOString()
     });
     
-    if (error instanceof APIError && error.status === 401) {
+    if (isAPIError(error) && error.status === 401) {
       throw new Error("Unauthorized: Invalid token");
     }
     
-    throw error;
+    if (error instanceof Error) {
+      throw error;
+    }
+    
+    throw new Error("Unknown error occurred");
   }
 });

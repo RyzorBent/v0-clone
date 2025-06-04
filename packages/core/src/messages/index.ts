@@ -2,17 +2,20 @@ import { SendMessageCommand, SQSClient } from "@aws-sdk/client-sqs";
 import { eq } from "drizzle-orm";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 import { nanoid } from "nanoid";
+// Import SST types and Resource from main package
 import { Resource } from "sst";
 import { z } from "zod";
 
-import { Actor } from "../actor";
-import { Chat } from "../chat";
-import { withTransaction } from "../db/transaction";
-import { APIError } from "../error";
-import { Realtime } from "../realtime";
-import { messages } from "./message.sql";
+import { Actor } from "../actor.js";
+import { Chat } from "../chat/index.js";
+import { chats } from "../chat/chat.sql.js";
+import { withTransaction } from "../db/transaction.js";
+import { APIError } from "../error.js";
+import { Realtime } from "../realtime.js";
+import { messages } from "./message.sql.js";
 
 export type Message = typeof messages.$inferSelect;
+export type { Message as Type }; // This allows using Message.Type in other files
 
 export namespace Message {
   const sqs = new SQSClient({});
@@ -67,13 +70,16 @@ export namespace Message {
 
   export async function list(chatId: string) {
     return await withTransaction(async (tx) => {
-      const [messages] = await Promise.all([
+      type QueryBuilder = typeof tx.query.messages;
+      type ComparisonOperators = Parameters<QueryBuilder['findMany']>[0]['where'] extends (table: any, ops: infer Ops) => any ? Ops : never;
+      
+      const [messagesList] = await Promise.all([
         tx.query.messages.findMany({
           columns: {
             context: false,
           },
-          where: (messages, { eq }) => eq(messages.chatId, chatId),
-          orderBy: (messages, { asc }) => asc(messages.createdAt),
+          where: (table: typeof messages, ops: ComparisonOperators) => ops.eq(table.chatId, chatId),
+          orderBy: (table: typeof messages, ops: { asc: (col: any) => any }) => ops.asc(table.createdAt),
         }),
         authorizeRead(chatId),
       ]);
@@ -105,7 +111,8 @@ export namespace Message {
       message.role === "user"
         ? sqs.send(
             new SendMessageCommand({
-              QueueUrl: Resource.GenerateMessageResponseQueue.url,
+              QueueUrl: process.env.GENERATE_MESSAGE_RESPONSE_QUEUE_URL || 
+                       (Resource as any).GenerateMessageResponseQueue?.url,
               MessageBody: JSON.stringify({ actor: Actor.useUser(), message }),
             }),
           )
@@ -142,7 +149,7 @@ export namespace Message {
       const actor = Actor.use();
       const chat = await tx.query.chats.findFirst({
         columns: { id: true, public: true, userId: true },
-        where: (chats, { eq }) => eq(chats.id, chatId),
+        where: (table: typeof chats, ops: { eq: (col: any, val: any) => any }) => ops.eq(table.id, chatId),
       });
       if (!chat) {
         throw APIError.notFound("Chat not found");
