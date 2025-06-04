@@ -2,14 +2,15 @@ import { SendMessageCommand, SQSClient } from "@aws-sdk/client-sqs";
 import { eq } from "drizzle-orm";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 import { nanoid } from "nanoid";
+// Import SST types and Resource from main package
 import { Resource } from "sst";
 import { z } from "zod";
-import { Actor } from "../actor";
-import { Chat } from "../chat";
-import { withTransaction } from "../db/transaction";
-import { APIError } from "../error";
-import { Realtime } from "../realtime";
-import { messages } from "./message.sql";
+import { Actor } from "../actor.js";
+import { Chat } from "../chat/index.js";
+import { withTransaction } from "../db/transaction.js";
+import { APIError } from "../error.js";
+import { Realtime } from "../realtime.js";
+import { messages } from "./message.sql.js";
 export var Message;
 (function (Message) {
     const sqs = new SQSClient({});
@@ -56,13 +57,13 @@ export var Message;
     };
     async function list(chatId) {
         return await withTransaction(async (tx) => {
-            const [messages] = await Promise.all([
+            const [messagesList] = await Promise.all([
                 tx.query.messages.findMany({
                     columns: {
                         context: false,
                     },
-                    where: (messages, { eq }) => eq(messages.chatId, chatId),
-                    orderBy: (messages, { asc }) => asc(messages.createdAt),
+                    where: (table, ops) => ops.eq(table.chatId, chatId),
+                    orderBy: (table, ops) => ops.asc(table.createdAt),
                 }),
                 authorizeRead(chatId),
             ]);
@@ -90,7 +91,8 @@ export var Message;
             Realtime.onMessageChanged(message),
             message.role === "user"
                 ? sqs.send(new SendMessageCommand({
-                    QueueUrl: Resource.GenerateMessageResponseQueue.url,
+                    QueueUrl: process.env.GENERATE_MESSAGE_RESPONSE_QUEUE_URL ||
+                        Resource.GenerateMessageResponseQueue?.url,
                     MessageBody: JSON.stringify({ actor: Actor.useUser(), message }),
                 }))
                 : Promise.resolve(),
@@ -126,7 +128,7 @@ export var Message;
             const actor = Actor.use();
             const chat = await tx.query.chats.findFirst({
                 columns: { id: true, public: true, userId: true },
-                where: (chats, { eq }) => eq(chats.id, chatId),
+                where: (table, ops) => ops.eq(table.id, chatId),
             });
             if (!chat) {
                 throw APIError.notFound("Chat not found");

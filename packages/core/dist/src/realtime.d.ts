@@ -1,4 +1,4 @@
-import type { Message } from "./types";
+import type { Message } from "./types.js";
 export declare namespace Realtime {
     function onTitleChanged(chatId: string, title: string): Promise<void>;
     function onMessageChanged({ context: _, ...message }: Message): Promise<void>;

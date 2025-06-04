@@ -1,9 +1,9 @@
 import { and, desc, eq } from "drizzle-orm";
 import { z } from "zod";
-import { Actor } from "../actor";
-import { withTransaction } from "../db/transaction";
-import { APIError } from "../error";
-import { chats } from "./chat.sql";
+import { Actor } from "../actor.js";
+import { withTransaction } from "../db/transaction.js";
+import { APIError } from "../error.js";
+import { chats } from "./chat.sql.js";
 export var Chat;
 (function (Chat) {
     Chat.PatchInput = z.object({
@@ -45,7 +45,7 @@ export var Chat;
     }
     Chat.create = create;
     async function patch(chatId, input) {
-        return await withTransaction(async (tx) => {
+        await withTransaction(async (tx) => {
             const actor = Actor.useUser();
             await tx
                 .update(chats)
@@ -55,7 +55,7 @@ export var Chat;
     }
     Chat.patch = patch;
     async function del(id) {
-        return await withTransaction(async (tx) => {
+        await withTransaction(async (tx) => {
             const actor = Actor.useUser();
             await tx
                 .delete(chats)
@@ -64,14 +64,14 @@ export var Chat;
     }
     Chat.del = del;
     async function touch(id) {
-        return await withTransaction(async (tx) => {
+        await withTransaction(async (tx) => {
             const actor = Actor.useUser();
             const [chat] = await tx
                 .update(chats)
                 .set({ updatedAt: new Date() })
                 .where(eq(chats.id, id))
                 .returning({ userId: chats.userId });
-            if (chat.userId !== actor.userId) {
+            if (!chat || chat.userId !== actor.userId) {
                 throw APIError.unauthorized();
             }
         });

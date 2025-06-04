@@ -1,7 +1,7 @@
 import { boolean, timestamp, varchar } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm/relations";
-import { column, defineTable } from "../db/utils";
-import { messages } from "../messages/message.sql";
+import { column, defineTable } from "../db/utils.js";
+import { messages } from "../messages/message.sql.js";
 export const chats = defineTable("chats", {
     id: column.id("id"),
     title: varchar("title", { length: 255 }),
