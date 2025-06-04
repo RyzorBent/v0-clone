@@ -1,12 +1,13 @@
 import { and, desc, eq } from "drizzle-orm";
 import { z } from "zod";
 
-import { Actor } from "../actor";
-import { withTransaction } from "../db/transaction";
-import { APIError } from "../error";
-import { chats } from "./chat.sql";
+import { Actor } from "../actor.js";
+import { withTransaction } from "../db/transaction.js";
+import { APIError } from "../error.js";
+import { chats } from "./chat.sql.js";
 
 export type Chat = typeof chats.$inferSelect;
+export type { Chat as Type }; // Allows using Chat.Type in other files
 
 export namespace Chat {
   export const PatchInput = z.object({
@@ -15,7 +16,7 @@ export namespace Chat {
   });
   export type PatchInput = z.infer<typeof PatchInput>;
 
-  export async function list() {
+  export async function list(): Promise<Chat[]> {
     return await withTransaction(async (tx) => {
       const { userId } = Actor.useUser();
       return await tx
@@ -26,7 +27,7 @@ export namespace Chat {
     });
   }
 
-  export async function get(chatId: string) {
+  export async function get(chatId: string): Promise<Chat | null> {
     return await withTransaction(async (tx) => {
       const actor = Actor.use();
       const chat = await tx.query.chats.findFirst({
@@ -41,7 +42,7 @@ export namespace Chat {
     });
   }
 
-  export async function create() {
+  export async function create(): Promise<Chat> {
     return await withTransaction(async (tx) => {
       const actor = Actor.useUser();
       const [chat] = await tx
@@ -55,8 +56,8 @@ export namespace Chat {
   export async function patch(
     chatId: string,
     input: z.infer<typeof PatchInput>,
-  ) {
-    return await withTransaction(async (tx) => {
+  ): Promise<void> {
+    await withTransaction(async (tx) => {
       const actor = Actor.useUser();
       await tx
         .update(chats)
@@ -65,8 +66,8 @@ export namespace Chat {
     });
   }
 
-  export async function del(id: string) {
-    return await withTransaction(async (tx) => {
+  export async function del(id: string): Promise<void> {
+    await withTransaction(async (tx) => {
       const actor = Actor.useUser();
       await tx
         .delete(chats)
@@ -74,15 +75,15 @@ export namespace Chat {
     });
   }
 
-  export async function touch(id: string) {
-    return await withTransaction(async (tx) => {
+  export async function touch(id: string): Promise<void> {
+    await withTransaction(async (tx) => {
       const actor = Actor.useUser();
       const [chat] = await tx
         .update(chats)
         .set({ updatedAt: new Date() })
         .where(eq(chats.id, id))
         .returning({ userId: chats.userId });
-      if (chat.userId !== actor.userId) {
+      if (!chat || chat.userId !== actor.userId) {
         throw APIError.unauthorized();
       }
     });
