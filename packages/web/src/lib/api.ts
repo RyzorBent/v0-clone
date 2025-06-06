@@ -9,7 +9,15 @@ export const api = createApi({
   baseQuery: fetchBaseQuery({
     baseUrl: import.meta.env.VITE_API_URL,
     prepareHeaders: (headers, api) => {
-      const token = (api.getState() as State).state?.token;
+
+      const state = (api.getState() as State).state
+      console.log({state})
+      const token  = state?.token;
+      if (!token) {
+        console.log('There is no token')
+        //throw error
+        return headers;
+      }
       headers.set("Authorization", `Bearer ${token}`);
       return headers;
     },

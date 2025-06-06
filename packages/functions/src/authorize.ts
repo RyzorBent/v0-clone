@@ -13,7 +13,7 @@ export const authorize = async (
         new URL(`${Resource.ClerkIssuer.value}/.well-known/jwks.json`),
       ),
       {
-        audience: ["v0-clone"],
+        audience: ["v0-clone", "authenticated"],
         issuer: Resource.ClerkIssuer.value,
       },
     );

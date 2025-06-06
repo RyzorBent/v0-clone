@@ -9,14 +9,32 @@ import { api, useGetChatQuery } from "~/lib/api";
 import { startListening } from "~/lib/realtime";
 import { activeChatChanged, initialize } from "~/lib/state";
 import { useAppDispatch, useAppSelector } from "~/lib/store";
+import { skipToken } from "@reduxjs/toolkit/query";
+
+function AuthGate({ children }: { children: React.ReactNode }) {
+  const { isLoaded, isSignedIn } = useAuth();              // Clerk status
+  const tokenReady = useAppSelector(({ state }) => !!state.token);
+
+  /* 1. Wait until Clerk has finished booting            */
+  if (!isLoaded) return null;
+
+  /* 2. If the user is signed-in, also wait for the JWT   */
+  if (isSignedIn && !tokenReady) return null;
+
+  /* 3. Either (a) signed-out, or (b) signed-in + token  */
+  return <>{children}</>;
+}
 
 export function RootLayout() {
-  return (
-    <div className="flex h-screen w-screen bg-background">
-      <ReduxEffects />
-      <HeaderOrSidebar />
-      <Outlet />
-    </div>
+  return (<>
+    <ReduxEffects />
+    <AuthGate>
+      <div className="flex h-screen w-screen bg-background">
+        <HeaderOrSidebar />
+        <Outlet />
+      </div>
+    </AuthGate>
+  </>
   );
 }
 
@@ -33,10 +51,13 @@ function ReduxEffects() {
   useEffect(() => {
     if (userId) {
       const populate = async () => {
-        const token = await getToken({ template: "lambda" });
+        const token = await getToken({template: "lambda"});
+        console.log({ token })
         if (token) {
           dispatch(initialize({ token, userId }));
           dispatch(api.util.resetApiState());
+        } else {
+          console.log("no token")
         }
       };
       populate();
@@ -63,8 +84,9 @@ function HeaderOrSidebar() {
 }
 
 function SignedOutHeader() {
+  const tokenReady = useAppSelector(({ state }) => Boolean(state.token));
   const activeChatId = useAppSelector(({ state }) => state.chatId);
-  const { data } = useGetChatQuery(activeChatId ?? "");
+  const { data } = useGetChatQuery(!tokenReady || !activeChatId ? skipToken : activeChatId);
 
   return (
     <div className="absolute inset-0 top-0 z-10 flex h-16 items-center justify-between gap-3 px-3">

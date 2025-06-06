@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 
 import { useGetChatQuery, usePatchChatMutation } from "~/lib/api";
+import { skipToken } from "@reduxjs/toolkit/query";
 import { LoadingButton } from "./loading-button";
 import { Button } from "./ui/button";
 import {
@@ -24,7 +25,7 @@ export function DialogRenameChat({
   open,
   setOpen,
 }: DialogRenameChatProps) {
-  const { data } = useGetChatQuery(chatId ?? "", { skip: !chatId });
+  const { data } = useGetChatQuery(chatId ? chatId : skipToken);
   const [patchChat, { isLoading }] = usePatchChatMutation();
 
   const [title, setTitle] = useState(data?.title ?? "");

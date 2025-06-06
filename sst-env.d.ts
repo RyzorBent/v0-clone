@@ -18,10 +18,6 @@ declare module "sst" {
       "type": "sst.sst.Secret"
       "value": string
     }
-    "ClerkSecretKey": {
-      "type": "sst.sst.Secret"
-      "value": string
-    }
     "DatabaseURL": {
       "type": "sst.sst.Secret"
       "value": string

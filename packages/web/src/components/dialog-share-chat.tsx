@@ -1,6 +1,8 @@
 import { Check, Globe, Link, Lock } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
+import { skipToken } from "@reduxjs/toolkit/query";
+
 
 import { useGetChatQuery, usePatchChatMutation } from "~/lib/api";
 import { cn } from "~/lib/utils";
@@ -27,7 +29,7 @@ export function DialogShareChat({
   chatId,
 }: DialogShareChatProps) {
   const [patchChat, { isLoading }] = usePatchChatMutation();
-  const { data } = useGetChatQuery(chatId ?? "", { skip: !chatId });
+  const { data } = useGetChatQuery(chatId ? chatId : skipToken);
 
   const [isPublic, setIsPublic] = useState(data?.public ?? false);
   const [isCopied, setIsCopied] = useState(false);

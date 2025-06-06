@@ -15,10 +15,12 @@ export const api = new sst.aws.Function("API", {
     cors: {
       allowCredentials: true,
       allowOrigins: [
-        $app.stage === "production"
-          ? "https://v0.headstarter.tech"
-          : "http://localhost:5173",
+           "https://d25kddx7nt9s6w.cloudfront.net",
+           "http://localhost:5173"
       ],
+      allowMethods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
+      allowHeaders: ["Content-Type", "Authorization"],
+      maxAge: "1 day",
     },
   },
 });

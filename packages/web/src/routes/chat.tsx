@@ -1,5 +1,7 @@
 import { AppWindow, Loader2 } from "lucide-react";
 import { useEffect, useState } from "react";
+import { skipToken } from "@reduxjs/toolkit/query";
+
 
 import { ArtifactContent } from "~/components/artifact-content";
 import { ChatHeader } from "~/components/chat-header";
@@ -27,19 +29,20 @@ import { cn } from "~/lib/utils";
 export function ChatPage() {
   const chatId = useChatId();
   const { isLoaded, userId } = useAuthLoaded();
-  const { chat, isChatLoading } = useGetChatQuery(chatId, {
-    selectFromResult: ({ data, isLoading }) => ({
-      chat: data
-        ? {
-            id: data.id,
-            userId: data.userId,
-            title: data.title,
-            public: data.public,
-          }
-        : null,
-      isChatLoading: isLoading,
-    }),
-  });
+  const {
+    chat,
+    isChatLoading,
+  } = useGetChatQuery(
+    chatId ? chatId : skipToken,
+    {
+      selectFromResult: ({ data, isLoading }) => ({
+        chat: data
+          ? { id: data.id, userId: data.userId, title: data.title, public: data.public }
+          : null,
+        isChatLoading: isLoading,
+      }),
+    }
+  );
   const messages = useListMessagesQuery(chatId, {
     selectFromResult: ({ isLoading }) => ({ isLoading }),
   });
