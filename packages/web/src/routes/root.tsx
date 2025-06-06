@@ -52,12 +52,11 @@ function ReduxEffects() {
     if (userId) {
       const populate = async () => {
         const token = await getToken({template: "lambda"});
-        console.log({ token })
         if (token) {
           dispatch(initialize({ token, userId }));
           dispatch(api.util.resetApiState());
         } else {
-          console.log("no token")
+          console.error("no token found in root.tsx")
         }
       };
       populate();

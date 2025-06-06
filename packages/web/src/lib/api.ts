@@ -11,7 +11,6 @@ export const api = createApi({
     prepareHeaders: (headers, api) => {
 
       const state = (api.getState() as State).state
-      console.log({state})
       const token  = state?.token;
       if (!token) {
         console.log('There is no token')
